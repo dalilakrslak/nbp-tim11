@@ -1,0 +1,111 @@
+package com.nbp.cinemaapp.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "screenings")
+public class Screening {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(unique = true, updatable = false, nullable = false)
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "movie_id", nullable = false)
+    @JsonIgnoreProperties({"screenings", "synopsis", "trailerUrl", "director", "createdAt", "updatedAt", "movieGenres", "movieWriters", "roles"})
+    private Movie movie;
+
+    @ManyToOne
+    @JoinColumn(name = "hall_id", nullable = false)
+    private Hall hall;
+
+    @Column(nullable = false)
+    private LocalDateTime startTime;
+
+    @Column
+    @CreationTimestamp
+    private Instant createdAt;
+
+    @Column
+    @UpdateTimestamp
+    private Instant updatedAt;
+
+    public Screening() {}
+
+    public Screening(final UUID id,
+                     final Movie movie,
+                     final Hall hall,
+                     final LocalDateTime startTime,
+                     final Instant createdAt,
+                     final Instant updatedAt) {
+        this.id = id;
+        this.movie = movie;
+        this.hall = hall;
+        this.startTime = startTime;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(final Movie movie) {
+        this.movie = movie;
+    }
+
+    public Hall getHall() {
+        return hall;
+    }
+
+    public void setHall(final Hall hall) {
+        this.hall = hall;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(final LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(final Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(final Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+}
