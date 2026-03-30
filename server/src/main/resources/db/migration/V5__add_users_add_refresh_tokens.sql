@@ -1,26 +1,20 @@
-BEGIN;
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    id RAW(16) DEFAULT SYS_GUID() PRIMARY KEY,
+    email VARCHAR2(255) NOT NULL UNIQUE,
+    password VARCHAR2(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS refresh_tokens (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL,
+CREATE TABLE refresh_tokens (
+    id RAW(16) DEFAULT SYS_GUID() PRIMARY KEY,
+    user_id RAW(16) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY (user_id)
+    CONSTRAINT fk_user_refresh_tokens FOREIGN KEY (user_id)
     REFERENCES users (id)
     ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_refresh_token_user_id
+CREATE INDEX idx_refresh_token_user_id
     ON refresh_tokens (user_id);
-
-COMMIT;
