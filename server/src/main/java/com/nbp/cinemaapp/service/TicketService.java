@@ -15,7 +15,7 @@ import com.nbp.cinemaapp.specification.SeatBookingSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -83,7 +83,7 @@ public class TicketService {
         final Ticket ticket = new Ticket();
         ticket.setPrice(price);
         ticket.setStatus(TicketStatus.PURCHASED);
-        ticket.setBookingDate(Instant.now());
+        ticket.setBookingDate(LocalDate.now());
         ticket.setUser(user);
         ticket.setScreening(screening);
 
