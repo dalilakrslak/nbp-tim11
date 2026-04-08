@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,15 +36,15 @@ public class Ticket {
     private TicketStatus status;
 
     @Column(nullable = false)
-    private Instant bookingDate;
+    private LocalDate bookingDate;
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -62,9 +62,9 @@ public class Ticket {
     public Ticket(final UUID id,
                   final Integer price,
                   final TicketStatus status,
-                  final Instant bookingDate,
-                  final Instant createdAt,
-                  final Instant updatedAt,
+                  final LocalDate bookingDate,
+                  final LocalDate createdAt,
+                  final LocalDate updatedAt,
                   final User user,
                   final Screening screening) {
         this.id = id;
@@ -89,15 +89,15 @@ public class Ticket {
         return status;
     }
 
-    public Instant getBookingDate() {
+    public LocalDate getBookingDate() {
         return bookingDate;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
@@ -121,7 +121,7 @@ public class Ticket {
         this.status = status;
     }
 
-    public void setBookingDate(final Instant bookingDate) {
+    public void setBookingDate(final LocalDate bookingDate) {
         this.bookingDate = bookingDate;
     }
 

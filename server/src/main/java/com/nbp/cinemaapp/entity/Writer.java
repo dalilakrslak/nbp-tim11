@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,11 +32,11 @@ public class Writer {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "writer")
     @JsonIgnore
@@ -47,8 +47,8 @@ public class Writer {
     public Writer(final UUID id,
                   final String firstName,
                   final String lastName,
-                  final Instant createdAt,
-                  final Instant updatedAt,
+                  final LocalDate createdAt,
+                  final LocalDate updatedAt,
                   final List<MovieWriter> movieWriters) {
         this.id = id;
         this.firstName = firstName;
@@ -70,11 +70,11 @@ public class Writer {
         return lastName;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

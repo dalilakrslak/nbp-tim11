@@ -3,16 +3,16 @@ package com.nbp.cinemaapp.dto.response;
 import com.nbp.cinemaapp.entity.Ticket;
 import com.nbp.cinemaapp.enums.TicketStatus;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class TicketResponse {
     private final UUID id;
     private final Integer price;
     private final TicketStatus status;
-    private final Instant bookingDate;
-    private final Instant createdAt;
-    private final Instant updatedAt;
+    private final LocalDate bookingDate;
+    private final LocalDate createdAt;
+    private final LocalDate updatedAt;
     private final UUID userId;
     private final UUID screeningId;
 
@@ -39,15 +39,15 @@ public class TicketResponse {
         return status;
     }
 
-    public Instant getBookingDate() {
+    public LocalDate getBookingDate() {
         return bookingDate;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

@@ -12,8 +12,8 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -35,24 +35,24 @@ public class Screening {
     private Hall hall;
 
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private LocalDate startTime;
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     public Screening() {}
 
     public Screening(final UUID id,
                      final Movie movie,
                      final Hall hall,
-                     final LocalDateTime startTime,
-                     final Instant createdAt,
-                     final Instant updatedAt) {
+                     final LocalDate startTime,
+                     final LocalDate createdAt,
+                     final LocalDate updatedAt) {
         this.id = id;
         this.movie = movie;
         this.hall = hall;
@@ -85,27 +85,27 @@ public class Screening {
         this.hall = hall;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDate getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(final LocalDateTime startTime) {
+    public void setStartTime(final LocalDate startTime) {
         this.startTime = startTime;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(final Instant createdAt) {
+    public void setCreatedAt(final LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(final Instant updatedAt) {
+    public void setUpdatedAt(final LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

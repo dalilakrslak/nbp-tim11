@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,11 +33,11 @@ public class Actor {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "actor", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -48,8 +48,8 @@ public class Actor {
     public Actor(final UUID id,
                  final String firstName,
                  final String lastName,
-                 final Instant createdAt,
-                 final Instant updatedAt,
+                 final LocalDate createdAt,
+                 final LocalDate updatedAt,
                  final List<Role> roles) {
         this.id = id;
         this.firstName = firstName;
@@ -83,19 +83,19 @@ public class Actor {
         this.lastName = lastName;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(final Instant createdAt) {
+    public void setCreatedAt(final LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(final Instant updatedAt) {
+    public void setUpdatedAt(final LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
 

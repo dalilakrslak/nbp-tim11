@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,11 +44,11 @@ public class Hall {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -60,8 +60,8 @@ public class Hall {
                 final String name,
                 final Venue venue,
                 final Set<Screening> screenings,
-                final Instant createdAt,
-                final Instant updatedAt) {
+                final LocalDate createdAt,
+                final LocalDate updatedAt) {
         this.id = id;
         this.name = name;
         this.venue = venue;
@@ -86,11 +86,11 @@ public class Hall {
         return screenings;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

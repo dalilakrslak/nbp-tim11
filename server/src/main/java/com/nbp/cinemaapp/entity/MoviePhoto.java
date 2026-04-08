@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -32,11 +32,11 @@ public class MoviePhoto {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
@@ -48,8 +48,8 @@ public class MoviePhoto {
     public MoviePhoto(final UUID id,
                       final String url,
                       final Boolean isCoverImage,
-                      final Instant createdAt,
-                      final Instant updatedAt,
+                      final LocalDate createdAt,
+                      final LocalDate updatedAt,
                       final Movie movie) {
         this.id = id;
         this.url = url;
@@ -71,11 +71,11 @@ public class MoviePhoto {
         return isCoverImage;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

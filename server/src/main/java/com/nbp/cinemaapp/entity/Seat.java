@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,11 +38,11 @@ public class Seat {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "hall_id", nullable = false)
@@ -57,8 +57,8 @@ public class Seat {
     public Seat(final UUID id,
                 final String seatCode,
                 final SeatType seatType,
-                final Instant createdAt,
-                final Instant updatedAt,
+                final LocalDate createdAt,
+                final LocalDate updatedAt,
                 final Hall hall) {
         this.id = id;
         this.seatCode = seatCode;
@@ -80,11 +80,11 @@ public class Seat {
         return seatType;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -29,11 +29,11 @@ public class Role {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
@@ -48,8 +48,8 @@ public class Role {
 
     public Role(final UUID id,
                 final String name,
-                final Instant createdAt,
-                final Instant updatedAt,
+                final LocalDate createdAt,
+                final LocalDate updatedAt,
                 final Movie movie,
                 final Actor actor) {
         this.id = id;
@@ -68,11 +68,11 @@ public class Role {
         return name;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

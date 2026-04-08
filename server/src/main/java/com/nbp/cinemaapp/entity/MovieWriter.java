@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -35,19 +35,19 @@ public class MovieWriter {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     public MovieWriter() {}
 
     public MovieWriter(final UUID id,
                        final Movie movie,
                        final Writer writer,
-                       final Instant createdAt,
-                       final Instant updatedAt) {
+                       final LocalDate createdAt,
+                       final LocalDate updatedAt) {
         this.id = id;
         this.movie = movie;
         this.writer = writer;
@@ -67,11 +67,11 @@ public class MovieWriter {
         return writer;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 }

@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,11 +38,11 @@ public class Venue {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "location_id")
@@ -63,8 +63,8 @@ public class Venue {
                  final String name,
                  final String street,
                  final String imageUrl,
-                 final Instant createdAt,
-                 final Instant updatedAt,
+                 final LocalDate createdAt,
+                 final LocalDate updatedAt,
                  final Location location,
                  final List<Hall> halls) {
         this.id = id;
@@ -93,11 +93,11 @@ public class Venue {
         return imageUrl;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 

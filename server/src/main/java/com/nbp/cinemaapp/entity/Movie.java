@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -58,11 +58,11 @@ public class Movie {
 
     @Column
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "movie", orphanRemoval = true)
     private List<MovieGenre> movieGenres;
@@ -92,8 +92,8 @@ public class Movie {
                  final String language,
                  final String trailerUrl,
                  final String director,
-                 final Instant createdAt,
-                 final Instant updatedAt,
+                 final LocalDate createdAt,
+                 final LocalDate updatedAt,
                  final List<MovieGenre> movieGenres,
                  final List<MoviePhoto> photos,
                  final List<Screening> screenings,
@@ -158,11 +158,11 @@ public class Movie {
         return director;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
