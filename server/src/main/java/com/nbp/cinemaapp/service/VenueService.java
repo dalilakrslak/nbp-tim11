@@ -54,7 +54,11 @@ public class VenueService {
         return venueMapper.entityToDto(venueRepository.save(venue));
     }
 
-    public void deleteVenue(UUID venueId) {
-        venueRepository.deleteById(venueId);
+    public void deleteVenue(final UUID venueId) {
+        boolean deleted = venueRepository.deleteById(venueId);
+
+        if (!deleted) {
+            throw new EntityNotFoundException("Venue not found with id: " + venueId);
+        }
     }
 }

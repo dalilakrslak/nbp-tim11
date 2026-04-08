@@ -4,14 +4,18 @@ import com.nbp.cinemaapp.entity.Location;
 import com.nbp.cinemaapp.entity.Venue;
 import com.nbp.cinemaapp.util.ResultSetUtil;
 import com.nbp.cinemaapp.util.UuidUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,16 +48,69 @@ public class VenueRepository {
         FROM VENUES
         """;
 
-    private final JdbcTemplate jdbcTemplate;
+    private static final String FIND_BY_ID_SQL = BASE_SELECT + """
+        WHERE RAWTOHEX(V.ID) = ?
+        """;
 
-    public VenueRepository(final JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    private static final String DELETE_BY_ID_SQL = """
+        DELETE FROM VENUES
+        WHERE RAWTOHEX(ID) = ?
+        """;
+
+    private static final String INSERT_SQL = """
+        INSERT INTO VENUES (
+            ID,
+            NAME,
+            STREET,
+            IMAGE_URL,
+            CREATED_AT,
+            UPDATED_AT,
+            LOCATION_ID
+        )
+        VALUES (
+            HEXTORAW(?),
+            ?,
+            ?,
+            ?,
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP,
+            HEXTORAW(?)
+        )
+        """;
+
+    private static final String UPDATE_SQL = """
+        UPDATE VENUES
+        SET NAME = ?,
+            STREET = ?,
+            IMAGE_URL = ?,
+            UPDATED_AT = CURRENT_TIMESTAMP,
+            LOCATION_ID = HEXTORAW(?)
+        WHERE RAWTOHEX(ID) = ?
+        """;
+
+    private final DataSource dataSource;
+
+    public VenueRepository(final DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public List<Venue> findAll() {
         String sql = BASE_SELECT + ORDER_BY_NAME;
+        List<Venue> venues = new ArrayList<>();
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapVenue(rs));
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet rs = preparedStatement.executeQuery()
+        ) {
+            while (rs.next()) {
+                venues.add(mapVenue(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch venues", e);
+        }
+
+        return venues;
     }
 
     public Page<Venue> findAll(final Pageable pageable) {
@@ -61,30 +118,52 @@ public class VenueRepository {
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
             """;
 
-        List<Venue> venues = jdbcTemplate.query(
-                sql,
-                (rs, rowNum) -> mapVenue(rs),
-                pageable.getOffset(),
-                pageable.getPageSize()
-        );
+        List<Venue> venues = new ArrayList<>();
+        long total = 0;
 
-        Long total = jdbcTemplate.queryForObject(COUNT_ALL, Long.class);
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ) {
+            preparedStatement.setLong(1, pageable.getOffset());
+            preparedStatement.setInt(2, pageable.getPageSize());
 
-        return new PageImpl<>(venues, pageable, total != null ? total : 0);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    venues.add(mapVenue(rs));
+                }
+            }
+
+            try (PreparedStatement countStatement = connection.prepareStatement(COUNT_ALL);
+                 ResultSet countRs = countStatement.executeQuery()) {
+                if (countRs.next()) {
+                    total = countRs.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch paged venues", e);
+        }
+
+        return new PageImpl<>(venues, pageable, total);
     }
 
     public Optional<Venue> findById(final UUID id) {
-        String sql = BASE_SELECT + """
-            WHERE RAWTOHEX(V.ID) = ?
-            """;
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)
+        ) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(id));
 
-        List<Venue> venues = jdbcTemplate.query(
-                sql,
-                (rs, rowNum) -> mapVenue(rs),
-                UuidUtil.toRawHex(id)
-        );
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapVenue(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch venue by id: " + id, e);
+        }
 
-        return venues.stream().findFirst();
+        return Optional.empty();
     }
 
     public Venue save(final Venue venue) {
@@ -102,66 +181,53 @@ public class VenueRepository {
                 .orElseThrow(() -> new IllegalStateException("Venue was updated but could not be retrieved"));
     }
 
-    public void deleteById(final UUID id) {
-        String sql = """
-            DELETE FROM VENUES
-            WHERE RAWTOHEX(ID) = ?
-            """;
+    public boolean deleteById(final UUID id) {
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID_SQL)
+        ) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(id));
 
-        jdbcTemplate.update(sql, UuidUtil.toRawHex(id));
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete venue by id: " + id, e);
+        }
     }
 
     private void insert(final UUID id, final Venue venue) {
-        String sql = """
-            INSERT INTO VENUES (
-                ID,
-                NAME,
-                STREET,
-                IMAGE_URL,
-                CREATED_AT,
-                UPDATED_AT,
-                LOCATION_ID
-            )
-            VALUES (
-                HEXTORAW(?),
-                ?,
-                ?,
-                ?,
-                CURRENT_TIMESTAMP,
-                CURRENT_TIMESTAMP,
-                HEXTORAW(?)
-            )
-            """;
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)
+        ) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(id));
+            preparedStatement.setString(2, venue.getName());
+            preparedStatement.setString(3, venue.getStreet());
+            preparedStatement.setString(4, venue.getImageUrl());
+            preparedStatement.setString(5, UuidUtil.toRawHex(venue.getLocation().getId()));
 
-        jdbcTemplate.update(
-                sql,
-                UuidUtil.toRawHex(id),
-                venue.getName(),
-                venue.getStreet(),
-                venue.getImageUrl(),
-                UuidUtil.toRawHex(venue.getLocation().getId())
-        );
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert venue", e);
+        }
     }
 
     private void update(final Venue venue) {
-        String sql = """
-            UPDATE VENUES
-            SET NAME = ?,
-                STREET = ?,
-                IMAGE_URL = ?,
-                UPDATED_AT = CURRENT_TIMESTAMP,
-                LOCATION_ID = HEXTORAW(?)
-            WHERE RAWTOHEX(ID) = ?
-            """;
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)
+        ) {
+            preparedStatement.setString(1, venue.getName());
+            preparedStatement.setString(2, venue.getStreet());
+            preparedStatement.setString(3, venue.getImageUrl());
+            preparedStatement.setString(4, UuidUtil.toRawHex(venue.getLocation().getId()));
+            preparedStatement.setString(5, UuidUtil.toRawHex(venue.getId()));
 
-        jdbcTemplate.update(
-                sql,
-                venue.getName(),
-                venue.getStreet(),
-                venue.getImageUrl(),
-                UuidUtil.toRawHex(venue.getLocation().getId()),
-                UuidUtil.toRawHex(venue.getId())
-        );
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update venue with id: " + venue.getId(), e);
+        }
     }
 
     private Venue mapVenue(final ResultSet rs) throws SQLException {

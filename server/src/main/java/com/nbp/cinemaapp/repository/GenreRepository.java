@@ -3,30 +3,47 @@ package com.nbp.cinemaapp.repository;
 import com.nbp.cinemaapp.entity.Genre;
 import com.nbp.cinemaapp.util.ResultSetUtil;
 import com.nbp.cinemaapp.util.UuidUtil;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class GenreRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    private static final String FIND_ALL_SQL = """
+        SELECT RAWTOHEX(ID) AS ID, NAME, CREATED_AT, UPDATED_AT
+        FROM GENRES
+        ORDER BY NAME
+        """;
 
-    public GenreRepository(final JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    private final DataSource dataSource;
+
+    public GenreRepository(final DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public List<Genre> findAll() {
-        String sql = """
-            SELECT RAWTOHEX(ID) AS ID, NAME, CREATED_AT, UPDATED_AT
-            FROM GENRES
-            ORDER BY NAME
-            """;
+        List<Genre> genres = new ArrayList<>();
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapGenre(rs));
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL);
+                ResultSet rs = preparedStatement.executeQuery()
+        ) {
+            while (rs.next()) {
+                genres.add(mapGenre(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch genres", e);
+        }
+
+        return genres;
     }
 
     private Genre mapGenre(final ResultSet rs) throws SQLException {

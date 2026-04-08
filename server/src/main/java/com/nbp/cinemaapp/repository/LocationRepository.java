@@ -3,11 +3,14 @@ package com.nbp.cinemaapp.repository;
 import com.nbp.cinemaapp.entity.Location;
 import com.nbp.cinemaapp.util.ResultSetUtil;
 import com.nbp.cinemaapp.util.UuidUtil;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,36 +18,59 @@ import java.util.UUID;
 @Repository
 public class LocationRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    private static final String FIND_ALL_SQL = """
+        SELECT RAWTOHEX(ID) AS ID, CITY, COUNTRY, CREATED_AT, UPDATED_AT
+        FROM LOCATIONS
+        ORDER BY CITY
+        """;
 
-    public LocationRepository(final JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    private static final String FIND_BY_ID_SQL = """
+        SELECT RAWTOHEX(ID) AS ID, CITY, COUNTRY, CREATED_AT, UPDATED_AT
+        FROM LOCATIONS
+        WHERE RAWTOHEX(ID) = ?
+        """;
+
+    private final DataSource dataSource;
+
+    public LocationRepository(final DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public List<Location> findAll() {
-        String sql = """
-            SELECT RAWTOHEX(ID) AS ID, CITY, COUNTRY, CREATED_AT, UPDATED_AT
-            FROM LOCATIONS
-            ORDER BY CITY
-            """;
+        List<Location> locations = new ArrayList<>();
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapLocation(rs));
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL);
+                ResultSet rs = preparedStatement.executeQuery()
+        ) {
+            while (rs.next()) {
+                locations.add(mapLocation(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch locations", e);
+        }
+
+        return locations;
     }
 
     public Optional<Location> findById(final UUID id) {
-        String sql = """
-            SELECT RAWTOHEX(ID) AS ID, CITY, COUNTRY, CREATED_AT, UPDATED_AT
-            FROM LOCATIONS
-            WHERE RAWTOHEX(ID) = ?
-            """;
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)
+        ) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(id));
 
-        List<Location> results = jdbcTemplate.query(
-                sql,
-                (rs, rowNum) -> mapLocation(rs),
-                UuidUtil.toRawHex(id)
-        );
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapLocation(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch location by id: " + id, e);
+        }
 
-        return results.stream().findFirst();
+        return Optional.empty();
     }
 
     private Location mapLocation(final ResultSet rs) throws SQLException {
