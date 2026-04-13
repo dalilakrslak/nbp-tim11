@@ -66,9 +66,8 @@ public class TicketService {
             throw new IllegalArgumentException("Selected seats must belong to the same hall as the screening");
         }
 
-        final List<SeatBooking> existingBookings = seatBookingRepository.findAll(
-                SeatBookingSpecification.hasScreeningIdAndTicketStatus(screeningId, TicketStatus.PURCHASED)
-        );
+        final List<SeatBooking> existingBookings =
+                seatBookingRepository.findAllByScreeningIdAndTicketStatus(screeningId, TicketStatus.PURCHASED);
 
         final Set<UUID> alreadyTakenSeatIds = existingBookings.stream()
                 .map(sb -> sb.getSeat().getId())
