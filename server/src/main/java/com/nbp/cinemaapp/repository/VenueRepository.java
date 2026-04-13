@@ -4,7 +4,6 @@ import com.nbp.cinemaapp.entity.Location;
 import com.nbp.cinemaapp.entity.Venue;
 import com.nbp.cinemaapp.util.ResultSetUtil;
 import com.nbp.cinemaapp.util.UuidUtil;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
