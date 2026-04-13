@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public final class ResultSetUtil {
 
@@ -13,5 +14,10 @@ public final class ResultSetUtil {
     public static LocalDate getLocalDate(final ResultSet rs, final String column) throws SQLException {
         Timestamp timestamp = rs.getTimestamp(column);
         return timestamp != null ? timestamp.toLocalDateTime().toLocalDate() : null;
+    }
+
+    public static LocalDateTime getLocalDateTime(final ResultSet rs, final String column) throws SQLException {
+        Timestamp timestamp = rs.getTimestamp(column);
+        return timestamp != null ? timestamp.toLocalDateTime() : null;
     }
 }
