@@ -91,4 +91,8 @@ public class Seat {
     public Hall getHall() {
         return hall;
     }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
 }

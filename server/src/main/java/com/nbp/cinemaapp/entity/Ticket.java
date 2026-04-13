@@ -113,6 +113,10 @@ public class Ticket {
         return seatBookings;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
     public void setPrice(final Integer price) {
         this.price = price;
     }

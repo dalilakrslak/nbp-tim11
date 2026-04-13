@@ -13,7 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -35,7 +35,7 @@ public class Screening {
     private Hall hall;
 
     @Column(nullable = false)
-    private LocalDate startTime;
+    private LocalDateTime startTime;
 
     @Column
     @CreationTimestamp
@@ -50,7 +50,7 @@ public class Screening {
     public Screening(final UUID id,
                      final Movie movie,
                      final Hall hall,
-                     final LocalDate startTime,
+                     final LocalDateTime startTime,
                      final LocalDate createdAt,
                      final LocalDate updatedAt) {
         this.id = id;
@@ -85,11 +85,11 @@ public class Screening {
         this.hall = hall;
     }
 
-    public LocalDate getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(final LocalDate startTime) {
+    public void setStartTime(final LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
