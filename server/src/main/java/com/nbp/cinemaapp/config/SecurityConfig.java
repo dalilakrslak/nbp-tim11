@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/venues/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/venues/*").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/tickets/create-ticket").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/*/pdf").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session ->

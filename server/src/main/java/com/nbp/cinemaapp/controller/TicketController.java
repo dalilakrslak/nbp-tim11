@@ -5,11 +5,17 @@ import com.nbp.cinemaapp.dto.response.TicketResponse;
 import com.nbp.cinemaapp.entity.Ticket;
 import com.nbp.cinemaapp.service.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -43,5 +49,27 @@ public class TicketController {
         );
 
         return ResponseEntity.status(201).body(new TicketResponse(ticket));
+    }
+
+    @Operation(
+            summary = "Preuzima PDF kino karte",
+            description = "Vraća prethodno generisani PDF za traženu kino kartu."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "PDF kino karte uspješno vraćen"),
+            @ApiResponse(responseCode = "403", description = "Korisnik nema pravo pristupa ovoj karti"),
+            @ApiResponse(responseCode = "404", description = "Karta ili PDF nisu pronađeni")
+    })
+    @GetMapping("/{ticketId}/pdf")
+    public ResponseEntity<byte[]> downloadTicketPdf(
+            @PathVariable final UUID ticketId,
+            @Parameter(hidden = true) final Authentication authentication) {
+        final TicketService.TicketDownloadResponse response =
+                ticketService.getTicketPdf(ticketId, authentication.getName());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"ticket-" + response.ticketId() + ".pdf\"")
+                .body(response.pdfBytes());
     }
 }

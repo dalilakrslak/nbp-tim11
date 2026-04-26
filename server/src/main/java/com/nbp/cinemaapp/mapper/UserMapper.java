@@ -1,6 +1,7 @@
 package com.nbp.cinemaapp.mapper;
 
 import com.nbp.cinemaapp.dto.request.UserRequest;
+import com.nbp.cinemaapp.dto.response.UserProfileResponse;
 import com.nbp.cinemaapp.dto.response.UserResponse;
 import com.nbp.cinemaapp.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,15 @@ public class UserMapper {
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
         dto.setCreatedAt(user.getCreatedAt());
+        return dto;
+    }
+
+    public UserProfileResponse entityToProfileDto(final User user) {
+        final UserProfileResponse dto = new UserProfileResponse();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        dto.setHasProfilePicture(user.getProfilePicture() != null && user.getProfilePicture().length > 0);
         return dto;
     }
 }

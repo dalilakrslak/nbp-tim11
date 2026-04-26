@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -46,6 +47,10 @@ public class Ticket {
     @UpdateTimestamp
     private LocalDate updatedAt;
 
+    @Lob
+    @Column(name = "ticket_pdf")
+    private byte[] ticketPdf;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -65,6 +70,7 @@ public class Ticket {
                   final LocalDate bookingDate,
                   final LocalDate createdAt,
                   final LocalDate updatedAt,
+                  final byte[] ticketPdf,
                   final User user,
                   final Screening screening) {
         this.id = id;
@@ -73,6 +79,7 @@ public class Ticket {
         this.bookingDate = bookingDate;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.ticketPdf = ticketPdf;
         this.user = user;
         this.screening = screening;
     }
@@ -101,6 +108,10 @@ public class Ticket {
         return updatedAt;
     }
 
+    public byte[] getTicketPdf() {
+        return ticketPdf;
+    }
+
     public User getUser() {
         return user;
     }
@@ -127,6 +138,10 @@ public class Ticket {
 
     public void setBookingDate(final LocalDate bookingDate) {
         this.bookingDate = bookingDate;
+    }
+
+    public void setTicketPdf(final byte[] ticketPdf) {
+        this.ticketPdf = ticketPdf;
     }
 
     public void setUser(final User user) {

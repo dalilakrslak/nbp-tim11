@@ -1,13 +1,13 @@
 package com.nbp.cinemaapp.service;
 
 import com.nbp.cinemaapp.config.JwtConfig;
-import com.nbp.cinemaapp.dto.projection.UserProjection;
 import com.nbp.cinemaapp.dto.request.AuthenticationRequestDto;
 import com.nbp.cinemaapp.dto.request.ChangePasswordRequest;
 import com.nbp.cinemaapp.dto.request.RegistrationRequestDto;
 import com.nbp.cinemaapp.dto.request.UserRequest;
 import com.nbp.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.nbp.cinemaapp.dto.response.RegistrationResponseDto;
+import com.nbp.cinemaapp.dto.response.UserProfileResponse;
 import com.nbp.cinemaapp.dto.response.UserResponse;
 import com.nbp.cinemaapp.entity.RefreshToken;
 import com.nbp.cinemaapp.entity.ResetToken;
@@ -26,8 +26,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
@@ -76,10 +78,9 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public UserProjection getProjectedUserByEmail(final String email) {
-        return userRepository.findProjectedByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(GONE,
-                        "The user with specified email does not exist"));
+    public UserProfileResponse getUserProfileByEmail(final String email) {
+        final User user = findUserByEmail(email);
+        return userMapper.entityToProfileDto(user);
     }
 
     @Transactional
@@ -188,14 +189,53 @@ public class UserService {
 
     @Transactional
     public void changePassword(String username, ChangePasswordRequest request) {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new IllegalArgumentException("Username not found: " + username));
+        User user = findUserByEmail(username);
 
         if (!passwordEncoder.matches(request.oldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Old password is incorrect");
         }
 
         user.setPassword(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateProfilePicture(final String email, final MultipartFile profilePicture) {
+        if (profilePicture == null || profilePicture.isEmpty()) {
+            throw new ResponseStatusException(BAD_REQUEST, "Profile picture file is required");
+        }
+
+        final String contentType = profilePicture.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new ResponseStatusException(BAD_REQUEST, "Profile picture must be an image");
+        }
+
+        final User user = findUserByEmail(email);
+        try {
+            user.setProfilePicture(profilePicture.getBytes());
+            user.setProfilePictureContentType(contentType);
+        } catch (final IOException e) {
+            throw new ResponseStatusException(BAD_REQUEST, "Could not read uploaded profile picture", e);
+        }
+
+        userRepository.save(user);
+    }
+
+    public User getProfilePictureOwner(final String email) {
+        final User user = findUserByEmail(email);
+
+        if (user.getProfilePicture() == null || user.getProfilePicture().length == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile picture not found");
+        }
+
+        return user;
+    }
+
+    @Transactional
+    public void deleteProfilePicture(final String email) {
+        final User user = findUserByEmail(email);
+        user.setProfilePicture(null);
+        user.setProfilePictureContentType(null);
         userRepository.save(user);
     }
 
@@ -231,5 +271,11 @@ public class UserService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    private User findUserByEmail(final String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(GONE,
+                        "The user with specified email does not exist"));
     }
 }

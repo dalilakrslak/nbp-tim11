@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -48,6 +49,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SystemRole role = SystemRole.USER;
+
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
+
+    @Column(name = "profile_picture_content_type")
+    private String profilePictureContentType;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshToken;
@@ -124,5 +132,21 @@ public class User {
 
     public void setRefreshToken(final List<RefreshToken> refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(final byte[] profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public String getProfilePictureContentType() {
+        return profilePictureContentType;
+    }
+
+    public void setProfilePictureContentType(final String profilePictureContentType) {
+        this.profilePictureContentType = profilePictureContentType;
     }
 }
