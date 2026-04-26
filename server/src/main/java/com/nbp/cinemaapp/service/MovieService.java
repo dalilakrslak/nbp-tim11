@@ -6,14 +6,10 @@ import com.nbp.cinemaapp.dto.response.MovieResponse;
 import com.nbp.cinemaapp.entity.Movie;
 import com.nbp.cinemaapp.mapper.MovieMapper;
 import com.nbp.cinemaapp.repository.MovieRepository;
-import com.nbp.cinemaapp.specification.MovieSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -55,15 +51,7 @@ public class MovieService {
                                                  final LocalDateTime projectionTime,
                                                  final LocalDate date,
                                                  final Pageable pageable) {
-
-        final Specification<Movie> specification = Specification.where(MovieSpecification.hasTitle(title))
-                .and(MovieSpecification.hasGenres(genres))
-                .and(MovieSpecification.hasCity(city))
-                .and(MovieSpecification.hasCinema(cinema))
-                .and(MovieSpecification.hasProjectionTime(projectionTime))
-                .and(MovieSpecification.isShowingOnDate(date));
-
-        return movieRepository.findAll(specification, pageable);
+        return movieRepository.findCurrentlyShowing(title, genres, city, cinema, projectionTime, date, pageable);
     }
 
     public Page<Movie> getUpcomingMovies(final String title,
@@ -71,22 +59,11 @@ public class MovieService {
                                          final String city,
                                          final String cinema,
                                          final Pageable pageable) {
-
-        final Specification<Movie> specification = Specification.where(MovieSpecification.hasTitle(title))
-                .and(MovieSpecification.hasGenres(genres))
-                .and(MovieSpecification.hasCity(city))
-                .and(MovieSpecification.hasCinema(cinema))
-                .and(MovieSpecification.isUpcoming());
-
-        return movieRepository.findAll(specification, pageable);
+        return movieRepository.findUpcoming(title, genres, city, cinema, pageable);
     }
 
     public Page<Movie> getLatestMovies(final Integer size) {
-        final Specification<Movie> specification = MovieSpecification.isShowingOnDate(null);
-
-        final Pageable pageable = PageRequest.of(0, size, Sort.by("startDate").descending());
-
-        return movieRepository.findAll(specification, pageable);
+        return movieRepository.findLatest(size);
     }
 
     public Page<Movie> getSimilarMovies(final UUID movieId, final Pageable pageable) {
