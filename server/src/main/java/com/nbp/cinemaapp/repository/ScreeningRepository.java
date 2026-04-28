@@ -28,10 +28,20 @@ public class ScreeningRepository {
         SELECT RAWTOHEX(S.ID) AS ID,
                RAWTOHEX(S.MOVIE_ID) AS MOVIE_ID,
                RAWTOHEX(S.HALL_ID) AS HALL_ID,
+               M.TITLE AS MOVIE_TITLE,
+               H.NAME AS HALL_NAME,
+               RAWTOHEX(V.ID) AS VENUE_ID,
+               V.NAME AS VENUE_NAME,
+               V.STREET AS VENUE_STREET,
+               V.IMAGE_URL AS VENUE_IMAGE_URL,
+               RAWTOHEX(L.ID) AS LOCATION_ID,
+               L.CITY AS LOCATION_CITY,
+               L.COUNTRY AS LOCATION_COUNTRY,
                S.START_TIME,
                S.CREATED_AT,
                S.UPDATED_AT
         FROM SCREENINGS S
+        JOIN MOVIES M ON S.MOVIE_ID = M.ID
         JOIN HALLS H ON S.HALL_ID = H.ID
         JOIN VENUES V ON H.VENUE_ID = V.ID
         JOIN LOCATIONS L ON V.LOCATION_ID = L.ID
@@ -58,10 +68,23 @@ public class ScreeningRepository {
             SELECT RAWTOHEX(S.ID) AS ID,
                    RAWTOHEX(S.MOVIE_ID) AS MOVIE_ID,
                    RAWTOHEX(S.HALL_ID) AS HALL_ID,
+                   M.TITLE AS MOVIE_TITLE,
+                   H.NAME AS HALL_NAME,
+                   RAWTOHEX(V.ID) AS VENUE_ID,
+                   V.NAME AS VENUE_NAME,
+                   V.STREET AS VENUE_STREET,
+                   V.IMAGE_URL AS VENUE_IMAGE_URL,
+                   RAWTOHEX(L.ID) AS LOCATION_ID,
+                   L.CITY AS LOCATION_CITY,
+                   L.COUNTRY AS LOCATION_COUNTRY,
                    S.START_TIME,
                    S.CREATED_AT,
                    S.UPDATED_AT
             FROM SCREENINGS S
+            JOIN MOVIES M ON S.MOVIE_ID = M.ID
+            JOIN HALLS H ON S.HALL_ID = H.ID
+            JOIN VENUES V ON H.VENUE_ID = V.ID
+            JOIN LOCATIONS L ON V.LOCATION_ID = L.ID
             WHERE RAWTOHEX(S.ID) = ?
             """;
 
@@ -88,10 +111,23 @@ public class ScreeningRepository {
             SELECT RAWTOHEX(S.ID) AS ID,
                    RAWTOHEX(S.MOVIE_ID) AS MOVIE_ID,
                    RAWTOHEX(S.HALL_ID) AS HALL_ID,
+                   M.TITLE AS MOVIE_TITLE,
+                   H.NAME AS HALL_NAME,
+                   RAWTOHEX(V.ID) AS VENUE_ID,
+                   V.NAME AS VENUE_NAME,
+                   V.STREET AS VENUE_STREET,
+                   V.IMAGE_URL AS VENUE_IMAGE_URL,
+                   RAWTOHEX(L.ID) AS LOCATION_ID,
+                   L.CITY AS LOCATION_CITY,
+                   L.COUNTRY AS LOCATION_COUNTRY,
                    S.START_TIME,
                    S.CREATED_AT,
                    S.UPDATED_AT
             FROM SCREENINGS S
+            JOIN MOVIES M ON S.MOVIE_ID = M.ID
+            JOIN HALLS H ON S.HALL_ID = H.ID
+            JOIN VENUES V ON H.VENUE_ID = V.ID
+            JOIN LOCATIONS L ON V.LOCATION_ID = L.ID
             WHERE RAWTOHEX(S.MOVIE_ID) = ?
             ORDER BY S.START_TIME
             """;
@@ -215,9 +251,36 @@ public class ScreeningRepository {
     private Screening mapScreening(final ResultSet rs) throws SQLException {
         final Movie movie = new Movie();
         movie.setId(UuidUtil.fromRawHex(rs.getString("MOVIE_ID")));
+        movie.setTitle(rs.getString("MOVIE_TITLE"));
 
-        final Hall hall = new Hall();
-        hall.setId(UuidUtil.fromRawHex(rs.getString("HALL_ID")));
+        final com.nbp.cinemaapp.entity.Location location = new com.nbp.cinemaapp.entity.Location(
+                UuidUtil.fromRawHex(rs.getString("LOCATION_ID")),
+                rs.getString("LOCATION_CITY"),
+                rs.getString("LOCATION_COUNTRY"),
+                null,
+                null,
+                null
+        );
+
+        final com.nbp.cinemaapp.entity.Venue venue = new com.nbp.cinemaapp.entity.Venue(
+                UuidUtil.fromRawHex(rs.getString("VENUE_ID")),
+                rs.getString("VENUE_NAME"),
+                rs.getString("VENUE_STREET"),
+                rs.getString("VENUE_IMAGE_URL"),
+                null,
+                null,
+                location,
+                null
+        );
+
+        final Hall hall = new Hall(
+                UuidUtil.fromRawHex(rs.getString("HALL_ID")),
+                rs.getString("HALL_NAME"),
+                venue,
+                null,
+                null,
+                null
+        );
 
         return new Screening(
                 UuidUtil.fromRawHex(rs.getString("ID")),
