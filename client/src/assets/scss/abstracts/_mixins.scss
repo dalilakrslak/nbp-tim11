@@ -1,0 +1,6 @@
+@use "../abstracts/variables";
+
+@mixin filter-icon-style {
+  color: variables.$shadow;
+  font-size: 16px;
+}
