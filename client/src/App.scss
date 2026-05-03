@@ -1,0 +1,40 @@
+@use "./assets/scss/abstracts/variables";
+@use "./assets/scss/abstracts/font-weights";
+
+.app-body {
+  background-color: variables.$neutral-white;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 64px;
+  font-weight: font-weights.$bold;
+  color: variables.$neutral-800;
+}
+
+h2 {
+  font-size: 48px;
+  font-weight: font-weights.$bold;
+  color: variables.$neutral-800;
+}
+
+h4 {
+  font-size: 32px;
+  font-weight: font-weights.$bold;
+  color: variables.$neutral-800;
+}
+
+h5 {
+  font-size: 24px;
+  font-weight: font-weights.$bold;
+  color: variables.$neutral-800;
+}
+
+h6 {
+  font-size: 20px;
+  font-weight: font-weights.$bold;
+  color: variables.$neutral-800;
+}
