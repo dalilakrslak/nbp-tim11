@@ -1,0 +1,50 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.header {
+  background-color: #1d2939;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  width: 100%;
+  max-width: 100%;
+  border-bottom: 1px variables.$neutral-500 solid;
+
+  .header-frame {
+    display: flex;
+    justify-content: space-between;
+    height: 48px;
+    width: 1256px;
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+
+      .header-logo {
+        display: block;
+        height: 100%;
+      }
+    }
+
+    .header-list {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      list-style: none;
+      column-gap: 24px;
+      font-size: 16px;
+      font-weight: font-weights.$regular;
+
+      .link {
+        color: #ffffff;
+        text-decoration: none;
+
+        &.isActive {
+          text-decoration: underline;
+          font-weight: font-weights.$semibold;
+        }
+      }
+    }
+  }
+}

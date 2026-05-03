@@ -1,0 +1,52 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.footer {
+  display: flex;
+  justify-content: center;
+  height: 212px;
+  width: 100%;
+  background: linear-gradient(to left, variables.$red-dark, #1a1a1a);
+  margin-top: auto;
+
+  .footer-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fcfcfd;
+      margin-bottom: 0;
+
+      .footer-link {
+        color: inherit;
+        font-weight: font-weights.$bold;
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        text-decoration: none;
+      }
+
+      .separator {
+        padding-left: 16px;
+        padding-right: 16px;
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+    }
+
+    .copyright {
+      color: #fef2f2;
+      font-size: 14px;
+      font-weight: font-weights.$regular;
+      margin-bottom: 0;
+    }
+
+    #logo {
+      width: 120px;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+@use "../../assets/scss/abstracts/variables";
+
+.seats-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e4e7ec;
+  border-radius: 16px;
+  margin-bottom: 140px;
+  min-width: 408px;
+  height: auto;
+
+  .seats-info {
+    text-align: center;
+  }
+
+  .explore-movies-button {
+    margin-bottom: 40px;
+  }
+}
+
+.features-list {
+  list-style: none;
+  padding-inline-start: 0px;
+  margin-bottom: 80px;
+  margin-right: 195px;
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 192px;
+  }
+
+  .check-icon {
+    color: variables.$red-dark;
+  }
+}

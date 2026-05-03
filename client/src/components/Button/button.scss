@@ -1,0 +1,82 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/base/typography";
+@use "sass:color";
+@use "../../assets/scss/abstracts/font-weights";
+
+.button {
+  border-radius: 8px;
+  padding: 12px 20px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: font-weights.$semibold;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  font-family: typography.$font-urbanist;
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.button-primary {
+    background-color: variables.$red-dark;
+    color: variables.$neutral-white;
+
+    &:hover {
+      background-color: color.adjust(variables.$red-dark, $lightness: -5%);
+    }
+
+    &:focus {
+      background-color: color.adjust(variables.$red-dark, $lightness: -10%);
+    }
+  }
+
+  &.button-secondary {
+    background-color: #ffffff;
+    color: variables.$red-dark;
+    border: 1px solid variables.$red-dark;
+
+    &:hover {
+      background-color: color.adjust(#ffffff, $lightness: -5%);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #b2222266;
+    }
+  }
+
+  &.button-tertiary {
+    width: 48px;
+    border: 1px solid variables.$neutral-200;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #ffffff;
+
+    &:hover:not(.disabled) {
+      background-color: variables.$neutral-200;
+    }
+
+    &.disabled {
+      color: variables.$neutral-200;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &.button-navbar {
+    background-color: variables.$neutral-800;
+    color: variables.$neutral-white;
+    border: 1px solid variables.$neutral-white;
+  }
+}
