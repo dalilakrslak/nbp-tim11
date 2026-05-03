@@ -164,7 +164,7 @@ public class MovieRepository {
     }
 
     public Page<Movie> findAll(final Pageable pageable) {
-        return executePagedQuery(FIND_ALL_SQL, COUNT_ALL_SQL, List.of(), pageable, false);
+        return executePagedQuery(FIND_ALL_SQL, COUNT_ALL_SQL, List.of(), pageable, true);
     }
 
     public Page<Movie> findCurrentlyShowing(final String title,
@@ -190,7 +190,7 @@ public class MovieRepository {
                 BASE_COUNT + queryParts.whereClause,
                 queryParts.parameters,
                 pageable,
-                false
+                true
         );
     }
 
@@ -214,7 +214,7 @@ public class MovieRepository {
                 BASE_COUNT + queryParts.whereClause,
                 queryParts.parameters,
                 pageable,
-                false
+                true
         );
     }
 
@@ -233,7 +233,7 @@ public class MovieRepository {
             WHERE M.START_DATE <= ? AND M.END_DATE >= ?
             """;
 
-        return executePagedQuery(sql, countSql, parameters, pageable, false);
+        return executePagedQuery(sql, countSql, parameters, pageable, true);
     }
 
     public Page<Movie> findSimilarMovies(final List<UUID> genreIds, final UUID movieId, final Pageable pageable) {
@@ -282,7 +282,7 @@ public class MovieRepository {
         }
         parameters.add(UuidUtil.toRawHex(movieId));
 
-        return executePagedQuery(sql, countSql, parameters, pageable, false);
+        return executePagedQuery(sql, countSql, parameters, pageable, true);
     }
 
     public Movie save(final Movie movie) {
