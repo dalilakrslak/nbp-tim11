@@ -1,0 +1,47 @@
+@use "../../assets/scss/abstracts/variables";
+
+.homepage-container {
+  .homepage-section-container {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .card-duration-genre {
+    display: flex;
+    justify-content: start;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .card-duration {
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+
+  .card-genre {
+    color: variables.$neutral-500;
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+
+  .separator {
+    color: variables.$neutral-400;
+    margin-top: 3.5px;
+    margin-bottom: 0;
+    font-size: 20px;
+  }
+
+  .venue-street {
+    margin-top: 4px;
+    margin-bottom: 0;
+    color: variables.$neutral-500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-link-wrapper {
+    text-decoration: none;
+    color: inherit;
+  }
+}

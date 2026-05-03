@@ -1,0 +1,45 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.section-container {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 92px 40px 92px;
+  background-color: #ffffff;
+  max-width: 1256px;
+  margin: 0;
+  width: 100%;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    align-items: flex-end;
+
+    .section-title {
+      font-weight: font-weights.$bold;
+      font-size: 32px;
+      line-height: 40px;
+      letter-spacing: 0.24px;
+      color: variables.$neutral-800;
+      margin: 0;
+    }
+
+    .section-see-all {
+      font-weight: font-weights.$semibold;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.24px;
+      color: variables.$red-dark;
+      cursor: pointer;
+      text-decoration: none;
+    }
+  }
+
+  .section-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 302px);
+    gap: 16px;
+    width: 100%;
+  }
+}

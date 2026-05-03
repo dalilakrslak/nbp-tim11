@@ -1,0 +1,14 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/base/typography";
+
+.hero {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  min-height: 730px;
+
+  .carousel-container {
+    position: relative;
+    width: 100%;
+  }
+}
