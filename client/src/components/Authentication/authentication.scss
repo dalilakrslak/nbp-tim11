@@ -1,0 +1,145 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+@use "../../assets/scss/base/typography";
+
+.auth-drawer {
+  .ant-drawer-body {
+    padding: 0;
+    margin: 0;
+  }
+
+  .auth-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .auth-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      gap: 32px;
+      background-color: variables.$neutral-800;
+      padding: 80px 64px 86px 64px;
+      overflow: visible;
+
+      .auth-logo-icon {
+        width: 131px;
+      }
+
+      .auth-title {
+        margin: 0 auto;
+        font-size: 24px;
+        font-weight: font-weights.$bold;
+        line-height: 32px;
+        letter-spacing: -0.036px;
+        color: variables.$neutral-300;
+        text-align: center;
+      }
+
+      .auth-subtitle {
+        width: 70%;
+        font-size: 14px;
+        line-height: 20px;
+        color: variables.$neutral-300;
+        text-align: center;
+      }
+
+      .auth-form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .auth-label {
+          font-size: 16px;
+          font-weight: font-weights.$semibold;
+          line-height: 24px;
+          letter-spacing: 0.08px;
+          color: variables.$neutral-white;
+        }
+
+        .auth-input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .auth-input {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 8px;
+            height: 48px;
+            border: 1px solid variables.$neutral-500;
+            border-radius: 8px;
+            padding-left: 32px;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0.08px;
+            color: rgba(16, 24, 40, 1);
+            font-family: typography.$font-urbanist;
+          }
+
+          .auth-input-icon {
+            position: absolute;
+            left: 12px;
+            color: variables.$shadow;
+            font-size: 16px;
+          }
+
+          .auth-toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 55%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: variables.$shadow;
+
+            &:focus {
+              outline: none;
+            }
+          }
+        }
+
+        .auth-error-text {
+          color: variables.$red-dark;
+          margin: 0;
+          padding: 0;
+        }
+
+        .auth-change-type {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          font-size: 16px;
+
+          .auth-change-type-text {
+            color: variables.$neutral-white;
+          }
+
+          .auth-change-type-link {
+            text-decoration: underline;
+            font-weight: font-weights.$semibold;
+            color: variables.$neutral-white;
+          }
+        }
+
+        .auth-submit-button {
+          margin-top: 36px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .auth-forgot-password {
+    color: variables.$neutral-400;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

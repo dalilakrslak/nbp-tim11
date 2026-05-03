@@ -1,0 +1,75 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+@use "../../assets/scss/base/typography";
+
+.profile-dropdown-container {
+  position: relative;
+  display: flex;
+
+  .profile-dropdown-button {
+    font-family: typography.$font-urbanist;
+    display: inline-block;
+    height: 48px;
+    border: 1px solid variables.$neutral-white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: font-weights.$semibold;
+    line-height: 24px;
+    letter-spacing: 0.08px;
+    color: variables.$neutral-white;
+    cursor: pointer;
+    background-color: variables.$neutral-800;
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+
+    .profile-dropdown-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .profile-dropdown-icon {
+        transition: transform 0.1s ease;
+      }
+
+      .profile-dropdown-icon-active {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .profile-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: variables.$neutral-white;
+    border: 1px solid variables.$neutral-300;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+
+    .profile-dropdown-item {
+      padding: 12px 20px;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-800;
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      border-radius: 8px;
+      text-align: left;
+      width: 100%;
+      font-family: typography.$font-urbanist;
+
+      &:hover {
+        background-color: variables.$red-dark;
+        color: variables.$neutral-white;
+      }
+    }
+  }
+}

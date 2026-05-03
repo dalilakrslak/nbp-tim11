@@ -1,0 +1,22 @@
+@use "../../assets/scss/abstracts/variables";
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .error-message {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 0.08px;
+    color: variables.$neutral-800;
+  }
+}
