@@ -50,8 +50,8 @@ export const Home = () => {
         >
           {currentlyShowing?.content?.map((movie) => {
             const coverPhoto =
-              movie.photos.find((photo) => photo.isCoverImage) ||
-              movie.photos[0];
+              movie.photos?.find((photo) => photo.isCoverImage) ||
+              movie.photos?.[0]
 
             return (
               <Link
