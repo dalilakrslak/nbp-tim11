@@ -189,18 +189,54 @@ class MovieRepositoryTest {
     private DataSource mockPagedMovieDataSource(final String title, final long total) throws Exception {
         DataSource dataSource = mock(DataSource.class);
         Connection connection = mock(Connection.class);
+
         PreparedStatement selectStatement = mock(PreparedStatement.class);
+        PreparedStatement genreStatement = mock(PreparedStatement.class);
+        PreparedStatement photoStatement = mock(PreparedStatement.class);
         PreparedStatement countStatement = mock(PreparedStatement.class);
+
         ResultSet selectResultSet = mock(ResultSet.class);
+        ResultSet genreResultSet = mock(ResultSet.class);
+        ResultSet photoResultSet = mock(ResultSet.class);
         ResultSet countResultSet = mock(ResultSet.class);
+
         when(dataSource.getConnection()).thenReturn(connection);
-        when(connection.prepareStatement(anyString())).thenReturn(selectStatement, countStatement);
+
+        when(connection.prepareStatement(anyString())).thenAnswer(invocation -> {
+            String sql = invocation.getArgument(0);
+
+            if (sql.contains("FROM MOVIE_GENRE MG")
+                    && sql.contains("WHERE RAWTOHEX(MG.MOVIE_ID)")) {
+                return genreStatement;
+            }
+
+            if (sql.contains("FROM MOVIE_PHOTOS")
+                    && sql.contains("WHERE RAWTOHEX(MOVIE_ID)")) {
+                return photoStatement;
+            }
+
+            if (sql.trim().startsWith("SELECT COUNT(*)")) {
+                return countStatement;
+            }
+
+            return selectStatement;
+        });
+
         when(selectStatement.executeQuery()).thenReturn(selectResultSet);
+        when(genreStatement.executeQuery()).thenReturn(genreResultSet);
+        when(photoStatement.executeQuery()).thenReturn(photoResultSet);
         when(countStatement.executeQuery()).thenReturn(countResultSet);
+
         when(selectResultSet.next()).thenReturn(true, false);
-        when(countResultSet.next()).thenReturn(true);
+
+        when(genreResultSet.next()).thenReturn(false);
+        when(photoResultSet.next()).thenReturn(false);
+
+        when(countResultSet.next()).thenReturn(true, false);
         when(countResultSet.getLong(1)).thenReturn(total);
+
         stubMovieRow(selectResultSet, title);
+
         return dataSource;
     }
 
