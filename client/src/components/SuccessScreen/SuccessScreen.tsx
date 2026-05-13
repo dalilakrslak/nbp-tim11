@@ -17,7 +17,6 @@ export type SuccessScreenProps = {
 
 export const SuccessScreen = ({ type, onClose }: SuccessScreenProps) => {
   const navigate = useNavigate();
-  const isSignIn = type === "signIn";
   const isSignUp = type === "signUp";
   const isResetPassword = type === "resetPassword";
 

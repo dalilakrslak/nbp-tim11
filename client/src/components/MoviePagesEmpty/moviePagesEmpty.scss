@@ -1,0 +1,55 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.empty-page-container {
+  height: 386px;
+  background-color: white;
+  border: 1px solid variables.$neutral-200;
+  border-radius: 24px;
+  box-shadow: 0px 1px 2px -2px variables.$shadow;
+  box-shadow: 0px 1px 3px -1px variables.$shadow;
+  margin-top: 16px;
+
+  .empty-page-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 24px;
+
+    .empty-page-icon {
+      width: 64px;
+      height: 72px;
+      color: rgba(71, 84, 103, 1);
+    }
+
+    .empty-page-title {
+      font-weight: font-weights.$semibold;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-800;
+    }
+
+    .empty-page-description {
+      text-align: center;
+      width: 55%;
+      font-weight: font-weights.$regular;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.08px;
+      color: rgba(71, 84, 103, 1);
+    }
+
+    .empty-page-link {
+      font-weight: font-weights.$semibold;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.08px;
+      color: variables.$red-dark;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@use "../../assets/scss/abstracts/variables";
+
+.showtimes {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+
+  .showtimes-title {
+    color: variables.$red-dark;
+    margin-bottom: 16px;
+  }
+
+  .showtimes-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    .showtime {
+      width: 71px;
+      height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid variables.$neutral-200;
+      border-radius: 8px;
+    }
+  }
+}

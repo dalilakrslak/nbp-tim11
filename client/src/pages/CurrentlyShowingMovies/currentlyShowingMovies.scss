@@ -1,0 +1,34 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.currently-showing-movies {
+  padding: 16px 92px;
+  margin-bottom: 52px;
+  max-width: 1256px;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 24px;
+
+  .currently-showing-movies-title {
+    margin-bottom: 24px;
+  }
+
+  .load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    .load-more {
+      cursor: pointer;
+      color: variables.$red-dark;
+      font-weight: font-weights.$semibold;
+      text-decoration: underline;
+    }
+  }
+
+  .reminder {
+    font-size: 14px;
+    color: variables.$neutral-500;
+    margin-bottom: 24px;
+  }
+}

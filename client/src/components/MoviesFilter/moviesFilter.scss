@@ -1,0 +1,44 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/mixins";
+
+.filter-container {
+  padding-bottom: 16px;
+
+  .search-input {
+    width: 100%;
+    padding-bottom: 16px;
+
+    .title-input {
+      color: variables.$neutral-500;
+      width: 100%;
+      border-radius: 8px;
+      height: 48px;
+    }
+
+    .search-icon {
+      color: variables.$shadow;
+      font-size: 16px;
+    }
+  }
+
+  .filters {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+    padding-bottom: 24px;
+
+    .filters-select-dropdown {
+      color: variables.$neutral-500;
+      width: 302px !important;
+
+      .ant-select {
+        display: flex !important;
+        align-items: center !important;
+      }
+
+      .filter-icon {
+        @include mixins.filter-icon-style;
+      }
+    }
+  }
+}
