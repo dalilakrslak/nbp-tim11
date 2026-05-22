@@ -1,20 +1,35 @@
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import { Footer, Header } from "./components";
+import { Footer, Header, SeatOptions, Payment } from "./components";
+import {
+  AboutUs,
+  CurrentlyShowingMovies,
+  Home,
+  MovieDetails,
+  Pricing,
+  UpcomingMovies,
+  ResetPassword,
+} from "./pages";
+import UsersAdmin from "./pages/AdminPanel/UsersAdmin";
+import AdminLayout from "./pages/AdminPanel/AdminLayout";
 import { AuthProvider } from "./contexts";
-import { AboutUs } from "./pages/AboutUs";
-import { CurrentlyShowingMovies } from "./pages/CurrentlyShowingMovies";
-import { Home } from "./pages/Home";
-import { Pricing } from "./pages/Pricing";
-import { UpcomingMovies } from "./pages/UpcomingMovies";
+
+import UserProfile from "./pages/Profile/UserProfile";
 
 import "./App.scss";
+import MoviesAdmin from "./pages/AdminPanel/MoviesAdmin";
+import VenuesAdmin from "./pages/AdminPanel/VenuesAdmin";
 
 const queryClient = new QueryClient();
 
-function App() {
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -23,6 +38,13 @@ function App() {
             components: {
               Select: {
                 controlHeightLG: 48,
+              },
+              Carousel: {
+                dotActiveWidth: 30,
+                dotGap: 12,
+                dotHeight: 4,
+                dotOffset: 24,
+                dotWidth: 30,
               },
               Drawer: {
                 colorBgElevated: "#1D2939",
@@ -37,11 +59,27 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/profile" element={<UserProfile />} />
                 <Route
                   path="/currently-showing"
                   element={<CurrentlyShowingMovies />}
                 />
                 <Route path="/upcoming" element={<UpcomingMovies />} />
+                <Route path="/movies/:movieId" element={<MovieDetails />} />
+                <Route
+                  path="/screenings/:screeningId/seats"
+                  element={<SeatOptions />}
+                />
+                <Route path="/payment/:screeningId" element={<Payment />} />
+                <Route path="/reset-password" element={<div />} />
+
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<UsersAdmin />} />
+                  <Route path="users" element={<UsersAdmin />} />
+                  <Route path="movies" element={<MoviesAdmin />} />
+                  <Route path="venues" element={<VenuesAdmin />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Footer />
             </Router>
@@ -50,6 +88,5 @@ function App() {
       </AuthProvider>
     </QueryClientProvider>
   );
-}
-
+};
 export default App;
