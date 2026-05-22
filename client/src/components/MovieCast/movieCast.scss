@@ -1,0 +1,41 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.movie-cast-container {
+  .movie-cast-title {
+    font-size: 20px;
+    font-weight: font-weights.$bold;
+    line-height: 24px;
+    color: variables.$neutral-500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .separator {
+      font-size: 24px;
+      padding-bottom: 3px;
+      color: variables.$red-dark;
+    }
+  }
+
+  .actors-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    .actor-name {
+      font-size: 14px;
+      font-weight: font-weights.$semibold;
+      line-height: 20px;
+      letter-spacing: 0.04px;
+      color: variables.$neutral-900;
+    }
+
+    .actor-role {
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: 0.024px;
+      color: variables.$neutral-500;
+      margin-bottom: 0;
+    }
+  }
+}

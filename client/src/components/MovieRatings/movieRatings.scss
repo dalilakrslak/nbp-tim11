@@ -1,0 +1,64 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.movie-ratings-container {
+  margin-top: 8px;
+
+  .movie-ratings-title {
+    font-size: 20px;
+    font-weight: font-weights.$bold;
+    line-height: 24px;
+    letter-spacing: -0.04px;
+    color: variables.$neutral-500;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .separator {
+      color: variables.$red-dark;
+      font-size: 24px;
+      padding-bottom: 3px;
+    }
+  }
+
+  .movie-ratings-list {
+    display: flex;
+    justify-content: start;
+    gap: 16px;
+
+    .movie-rating-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid variables.$neutral-200;
+      border-radius: 8px;
+      background-color: variables.$neutral-white;
+
+      .rating-star {
+        font-size: 16px;
+        color: variables.$red-dark;
+      }
+
+      .rating-info {
+        .rating-value {
+          font-size: 14px;
+          font-weight: font-weights.$semibold;
+          line-height: 20px;
+          letter-spacing: 0.08px;
+          color: variables.$neutral-900;
+          margin: 0;
+          padding: 0;
+        }
+
+        .rating-provider {
+          font-size: 12px;
+          line-height: 16px;
+          letter-spacing: 0.024px;
+          color: variables.$neutral-500;
+          margin: 0;
+        }
+      }
+    }
+  }
+}

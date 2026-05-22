@@ -1,0 +1,99 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.movie-info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 620px;
+
+  .movie-info-title {
+    font-size: 32px;
+    font-weight: font-weights.$bold;
+    line-height: 40px;
+    color: variables.$neutral-800;
+  }
+
+  .base-info {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 16px;
+
+    .separator {
+      color: variables.$red-dark;
+    }
+
+    .pg-rating,
+    .duration,
+    .language {
+      font-size: 16px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-800;
+      line-height: 24px;
+    }
+  }
+
+  .genre-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 16px;
+    height: 32px;
+
+    .genre {
+      border-radius: 8px;
+      background-color: variables.$neutral-200;
+      padding: 6px 8px 6px 8px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      .genre-name {
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.04px;
+        color: variables.$shadow;
+      }
+    }
+  }
+
+  .movie-info-director-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .director-name {
+      font-size: 16px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-800;
+      line-height: 24px;
+    }
+
+    .creator-title {
+      font-size: 16px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-500;
+      line-height: 24px;
+    }
+  }
+
+  .movie-info-writers-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .writer-name {
+      font-size: 16px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-800;
+      line-height: 24px;
+    }
+
+    .creator-title {
+      font-size: 16px;
+      letter-spacing: 0.08px;
+      color: variables.$neutral-500;
+      line-height: 24px;
+    }
+  }
+}

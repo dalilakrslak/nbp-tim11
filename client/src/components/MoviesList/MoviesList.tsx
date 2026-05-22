@@ -23,7 +23,7 @@ export const MoviesList = ({
   isLoading = false,
 }: MoviesListProps) => {
   if (isLoading) {
-    return <Loading size="large" />;
+    return <Loading />;
   }
 
   return (
@@ -63,7 +63,11 @@ export const MoviesList = ({
             : movie.screenings;
           extraContent = (
             <div className="card-showtimes">
-              <Showtimes showtimes={filteredScreenings} />
+              <Showtimes
+                showtimes={filteredScreenings}
+                selectedScreening={null}
+                onScreeningSelect={() => {}}
+              />
             </div>
           );
         } else {
