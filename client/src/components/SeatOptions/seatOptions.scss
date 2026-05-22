@@ -1,0 +1,356 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+@use "../../assets/scss/base/typography";
+
+.seat-options {
+  max-width: 1256px;
+  padding: 92px;
+  margin: 0 auto;
+
+  .booking-header {
+    display: flex;
+
+    .movie-photo {
+      width: 134px;
+      height: 126px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .movie-info {
+      margin-left: 25px;
+      .movie-title {
+        font-size: 20px;
+        font-weight: font-weights.$bold;
+        color: variables.$neutral-800;
+      }
+
+      .base-info {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 12px;
+
+        .separator {
+          color: variables.$red-dark;
+        }
+
+        .pg-rating,
+        .duration,
+        .language {
+          font-size: 16px;
+          letter-spacing: 0.08px;
+          color: variables.$neutral-800;
+          line-height: 24px;
+        }
+      }
+    }
+
+    .booking-details {
+      margin-left: 35px;
+      .booking-details-title {
+        font-size: 20px;
+        font-weight: font-weights.$bold;
+        color: variables.$neutral-800;
+      }
+      .booking-details-info {
+        font-size: 16px;
+        line-height: 24px;
+      }
+    }
+  }
+
+  .seat-divider {
+    border: 1px solid variables.$neutral-200;
+    margin: 0 -92px 24px -92px;
+  }
+
+  .layout {
+    display: flex;
+    gap: 95px;
+    padding: 0px 48px;
+
+    .seating-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+
+      .seating-layout-title {
+        font-size: 16px;
+        color: variables.$neutral-800;
+      }
+
+      .seating-layout-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 72px;
+
+        .screen-svg {
+          width: 400px;
+          height: 50px;
+        }
+
+        .screen-path {
+          stroke: variables.$red-dark;
+          stroke-width: 7;
+          fill: none;
+          stroke-linecap: round;
+        }
+      }
+
+      .seats-container {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .seat-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        justify-content: center;
+
+        .row-seats {
+          display: flex;
+          gap: 8px;
+
+          button:nth-child(4) {
+            margin-right: 68px;
+          }
+        }
+
+        .seat {
+          font-family: typography.$font-urbanist;
+          width: 52px;
+          height: 40px;
+          border: 1px solid variables.$neutral-200;
+          border-radius: 8px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &.regular {
+            background-color: variables.$neutral-white;
+
+            &:hover {
+              background-color: variables.$neutral-200;
+            }
+          }
+
+          &.reserved {
+            background-color: variables.$neutral-200;
+            color: variables.$neutral-800;
+            cursor: not-allowed;
+
+            &:hover {
+              transform: none;
+              border-color: transparent;
+            }
+          }
+
+          &.selected {
+            background-color: variables.$red-dark;
+            color: variables.$neutral-white;
+
+            &:hover {
+              background-color: variables.$red-dark;
+            }
+          }
+
+          &.vip {
+            background-color: variables.$neutral-white;
+
+            &:hover {
+              background-color: variables.$neutral-200;
+            }
+
+            &.reserved {
+              background-color: variables.$neutral-200;
+              color: variables.$neutral-800;
+              cursor: not-allowed;
+
+              &:hover {
+                background-color: variables.$neutral-200;
+                transform: none;
+                border-color: transparent;
+              }
+
+              .vip-star {
+                color: variables.$neutral-800;
+              }
+            }
+
+            &.selected {
+              background-color: variables.$red-dark;
+              color: variables.$neutral-white;
+              border-color: variables.$red-dark;
+
+              .vip-star {
+                color: variables.$neutral-white;
+              }
+            }
+
+            .vip-star {
+              font-size: 14px;
+              margin-right: 4px;
+              color: variables.$neutral-800;
+            }
+          }
+
+          &.love {
+            background-color: variables.$neutral-white;
+            width: 112px;
+
+            &:hover {
+              background-color: variables.$neutral-200;
+            }
+
+            &.selected {
+              background-color: variables.$red-dark;
+              color: variables.$neutral-white;
+            }
+
+            &.reserved {
+              background-color: variables.$neutral-200;
+              color: variables.$neutral-800;
+              cursor: not-allowed;
+
+              &:hover {
+                background-color: variables.$neutral-200;
+                transform: none;
+                border-color: transparent;
+              }
+            }
+          }
+        }
+
+        &:last-child .row-seats {
+          button:nth-child(2) {
+            margin-right: 68px;
+          }
+
+          button:nth-child(4) {
+            margin-right: 0px;
+          }
+        }
+      }
+    }
+
+    .seat-guide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .seat-guide-title {
+        font-size: 16px;
+        color: variables.$neutral-800;
+        margin-bottom: 32px;
+      }
+
+      .seat-guide-legend {
+        display: flex;
+        gap: 150px;
+
+        .legend-item {
+          display: flex;
+          align-items: center;
+          margin-bottom: 16px;
+          font-size: 14px;
+
+          .legend-text {
+            color: variables.$neutral-800;
+            font-size: 16px;
+          }
+
+          .legend-seat {
+            width: 52px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-right: 12px;
+
+            &.available {
+              background-color: variables.$neutral-white;
+              color: variables.$neutral-800;
+              border: 1px solid variables.$neutral-200;
+            }
+
+            &.reserved {
+              background-color: variables.$neutral-200;
+              color: variables.$neutral-800;
+            }
+
+            &.selected {
+              background-color: variables.$red-dark;
+              color: variables.$neutral-white;
+            }
+
+            &.regular {
+              background-color: variables.$neutral-white;
+              color: variables.$neutral-800;
+              border: 1px solid variables.$neutral-200;
+            }
+
+            &.vip {
+              background-color: variables.$neutral-white;
+              color: variables.$neutral-800;
+              border: 1px solid variables.$neutral-200;
+            }
+
+            &.love {
+              background-color: variables.$neutral-white;
+              color: variables.$neutral-800;
+              border: 1px solid variables.$neutral-200;
+              width: 112px;
+            }
+          }
+        }
+      }
+
+      .chosen-seats {
+        margin-bottom: 25px;
+        width: 100%;
+
+        .chosen-seats-title {
+          font-size: 16px;
+          color: variables.$neutral-800;
+          margin-bottom: 32px;
+          text-align: center;
+        }
+
+        .seat-list {
+          display: flex;
+          justify-content: space-between;
+          font-size: 16px;
+          color: variables.$neutral-800;
+        }
+
+        .seat-summary {
+          display: flex;
+          justify-content: space-between;
+          font-size: 20px;
+          font-weight: font-weights.$bold;
+          color: variables.$neutral-800;
+        }
+      }
+
+      .continue-button {
+        width: 100%;
+        margin-top: auto;
+      }
+
+      .seat-guide-divider {
+        border: 1px solid variables.$neutral-200;
+        margin: 16px 0 32px 0;
+        width: 100%;
+      }
+    }
+  }
+}
