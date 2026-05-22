@@ -26,6 +26,19 @@
       align-items: center;
       border: 1px solid variables.$neutral-200;
       border-radius: 8px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      &.selected {
+        background-color: variables.$red-dark;
+
+        .start-time {
+          color: variables.$neutral-white;
+        }
+      }
     }
   }
 }

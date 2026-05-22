@@ -1,6 +1,6 @@
-import "./showtimes.scss";
+import type { Screening } from "../../api/types";
 
-import { Movie } from "../../api/types";
+import "./showtimes.scss";
 
 const formatTime = (date: string | Date): string => {
   const time = new Date(date);
@@ -12,18 +12,41 @@ const formatTime = (date: string | Date): string => {
 };
 
 export type ShowtimesProps = {
-  showtimes: Movie["screenings"];
+  showtimes: Screening[];
+  selectedScreening: Screening | null;
+  onScreeningSelect: (screening: Screening) => void;
+  isLoading?: boolean;
 };
 
-export const Showtimes = ({ showtimes }: ShowtimesProps) => {
+export const Showtimes = ({
+  showtimes,
+  selectedScreening,
+  onScreeningSelect,
+  isLoading,
+}: ShowtimesProps) => {
+  if (isLoading) {
+    return (
+      <div className="showtimes">
+        <h6 className="showtimes-title">Showtimes</h6>
+        <div className="showtimes-container">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="showtimes">
       <h6 className="showtimes-title">Showtimes</h6>
       <div className="showtimes-container">
         {showtimes.length > 0 ? (
-          showtimes.map((showtime, index) => (
-            <div key={index} className="showtime">
-              <h6>{formatTime(showtime.startTime)}</h6>
+          showtimes.map((showtime) => (
+            <div
+              key={showtime.id}
+              className={`showtime ${
+                selectedScreening?.id === showtime.id ? "selected" : ""
+              }`}
+              onClick={() => onScreeningSelect(showtime)}
+            >
+              <h6 className="start-time">{formatTime(showtime.startTime)}</h6>
             </div>
           ))
         ) : (
