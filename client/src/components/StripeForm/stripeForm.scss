@@ -1,0 +1,162 @@
+.stripe-form {
+  width: 832px;
+  border-radius: 12px;
+  background-color: #fafafa;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.payment-header-container {
+  margin-bottom: 1rem;
+
+  .payment-header {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #1d2939;
+  }
+}
+
+.split-card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  label {
+    font-weight: 600;
+    font-size: 14px;
+    display: block;
+    color: #344054;
+  }
+}
+
+.input-field {
+  .field-label {
+    margin-bottom: 8px;
+  }
+
+  .input-wrapper {
+    background: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 12px;
+  }
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.half-width {
+  flex: 1;
+}
+
+.payment-error {
+  color: #d32f2f;
+  background: #ffebee;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border: 1px solid #ffcdd2;
+}
+
+.user-info {
+  .email-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 600;
+    }
+  }
+}
+
+.payment-submit-button {
+  padding: 10px 20px;
+  background-color: #5c9ded;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #478fe0;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.payment-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.payment-success-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: #4caf50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: white;
+    font-weight: bold;
+  }
+
+  h2 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .success-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+
+    .success-button,
+    .download-button {
+      min-width: 140px;
+    }
+  }
+}
