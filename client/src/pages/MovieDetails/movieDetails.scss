@@ -1,0 +1,31 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.movie-details-container {
+  padding: 40px 92px;
+  background-color: variables.$neutral-white;
+  max-width: 1256px;
+  margin: 0 auto;
+
+  .movie-details-content {
+    .movie-details-title {
+      font-size: 24px;
+      font-weight: font-weights.$bold;
+      line-height: 32px;
+      color: variables.$neutral-800;
+      padding-bottom: 24px;
+    }
+
+    .movie-details-info-ticket-container {
+      display: flex;
+      gap: 16px;
+
+      .movie-details-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        box-sizing: border-box;
+      }
+    }
+  }
+}

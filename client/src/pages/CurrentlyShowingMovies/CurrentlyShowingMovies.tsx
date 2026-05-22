@@ -7,16 +7,13 @@ import {
   Loading,
 } from "../../components";
 import { useCurrentlyShowingMovies } from "../../hooks";
+import type { UpcomingMoviesFilters } from "../UpcomingMovies";
 
 import "./currentlyShowingMovies.scss";
 
 const PAGE_SIZE = 4;
 
-export type CurrentlyShowingMoviesFilters = {
-  title?: string;
-  genres?: string[];
-  city?: string;
-  cinema?: string;
+export type CurrentlyShowingMoviesFilters = UpcomingMoviesFilters & {
   projectionTime: string;
   date: string;
 };
@@ -97,7 +94,7 @@ export const CurrentlyShowingMovies = () => {
 
       <div className="currently-showing-movies-list-container">
         {isLoading ? (
-          <Loading size="large" />
+          <Loading />
         ) : showEmptyState ? (
           <MoviePagesEmpty type="currently-showing" />
         ) : (
