@@ -1,0 +1,41 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
+.see-also-list-container {
+  margin-top: 48px;
+  width: 100%;
+
+  .see-also-list-title {
+    font-weight: font-weights.$bold;
+    font-size: 24px;
+    letter-spacing: -0.24px;
+    color: variables.$neutral-800;
+  }
+
+  .see-also-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+
+    .card-link-wrapper {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+
+  .see-also-list-pagination {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.see-also-no-data {
+  text-align: center;
+  font-weight: font-weights.$semibold;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0.08px;
+  color: variables.$neutral-800;
+}
