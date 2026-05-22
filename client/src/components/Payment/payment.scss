@@ -1,0 +1,153 @@
+@use "../../assets/scss/abstracts/font-weights";
+@use "../../assets/scss/abstracts/variables";
+
+.payment-container {
+  display: flex;
+  max-width: 1256px;
+  padding: 16px 92px;
+  margin: 0 auto;
+  gap: 16px;
+
+  .booking-summary {
+    .booking-summary-header {
+      color: #667085;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 32px 0 22px 0;
+    }
+
+    .booking-summary-details {
+      display: flex;
+      width: 408px;
+      height: 634px;
+      background-color: #1d2939;
+      border-radius: 16px;
+      padding: 24px;
+
+      .movie-details {
+        display: flex;
+        flex-direction: column;
+
+        .basic-info-container {
+          display: flex;
+
+          .movie-photo {
+            width: 134px;
+            height: 126px;
+            object-fit: cover;
+            border-radius: 16px;
+          }
+
+          .movie-info {
+            margin-left: 25px;
+            .movie-title {
+              font-size: 20px;
+              font-weight: font-weights.$bold;
+              color: #fcfcfd;
+            }
+
+            .base-info {
+              display: flex;
+              justify-content: start;
+              align-items: center;
+              gap: 12px;
+
+              .separator {
+                color: variables.$red-dark;
+              }
+
+              .pg-rating,
+              .duration,
+              .language {
+                font-size: 16px;
+                letter-spacing: 0.08px;
+                color: #fcfcfd;
+                line-height: 24px;
+              }
+            }
+          }
+        }
+
+        .booking-details {
+          margin-left: 35px;
+          .booking-details-title {
+            font-size: 20px;
+            font-weight: font-weights.$bold;
+            color: variables.$neutral-800;
+          }
+          .booking-details-info {
+            font-size: 16px;
+            line-height: 24px;
+          }
+        }
+
+        .seat-divider {
+          border: 1px solid variables.$neutral-200;
+          width: 100%;
+          margin-top: 24px;
+          margin-bottom: 32px;
+        }
+
+        .date-and-time {
+          margin-bottom: 16px;
+
+          .date-and-time-gray {
+            color: #98a2b3;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+          }
+
+          .date-and-time-white {
+            color: #fcfcfd;
+            font-size: 16px;
+            margin: 0;
+          }
+        }
+
+        .cinema-details {
+          margin-top: 16px;
+          margin-bottom: 16px;
+
+          .cinema-details-gray {
+            color: #98a2b3;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+          }
+
+          .cinema-details-white {
+            color: #fcfcfd;
+            font-size: 16px;
+          }
+        }
+
+        .seat-details {
+          .seat-details-gray {
+            color: #98a2b3;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+          }
+
+          .seat-details-white {
+            color: #fcfcfd;
+            font-size: 16px;
+          }
+
+          .price-details {
+            margin-top: 32px;
+
+            .price-details-gray {
+              color: #98a2b3;
+              font-size: 16px;
+              margin: 0 0 8px 0;
+            }
+
+            .price-details-white {
+              color: #fcfcfd;
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
