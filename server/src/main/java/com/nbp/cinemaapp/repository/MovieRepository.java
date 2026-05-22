@@ -4,6 +4,10 @@ import com.nbp.cinemaapp.entity.Genre;
 import com.nbp.cinemaapp.entity.Movie;
 import com.nbp.cinemaapp.entity.MovieGenre;
 import com.nbp.cinemaapp.entity.MoviePhoto;
+import com.nbp.cinemaapp.entity.Screening;
+import com.nbp.cinemaapp.entity.Hall;
+import com.nbp.cinemaapp.entity.Venue;
+import com.nbp.cinemaapp.entity.Location;
 import com.nbp.cinemaapp.enums.PgRating;
 import com.nbp.cinemaapp.util.ResultSetUtil;
 import com.nbp.cinemaapp.util.UuidUtil;
@@ -137,6 +141,37 @@ public class MovieRepository {
         WHERE RAWTOHEX(MOVIE_ID) = ?
         ORDER BY IS_COVER_IMAGE DESC, CREATED_AT
         """;
+
+    private static final String FIND_MOVIE_SCREENINGS_SQL = """
+    SELECT RAWTOHEX(S.ID) AS ID,
+           S.START_TIME,
+           S.CREATED_AT,
+           S.UPDATED_AT,
+
+           RAWTOHEX(H.ID) AS HALL_ID,
+           H.NAME AS HALL_NAME,
+           H.CREATED_AT AS HALL_CREATED_AT,
+           H.UPDATED_AT AS HALL_UPDATED_AT,
+
+           RAWTOHEX(V.ID) AS VENUE_ID,
+           V.NAME AS VENUE_NAME,
+           V.STREET AS VENUE_STREET,
+           V.IMAGE_URL AS VENUE_IMAGE_URL,
+           V.CREATED_AT AS VENUE_CREATED_AT,
+           V.UPDATED_AT AS VENUE_UPDATED_AT,
+
+           RAWTOHEX(L.ID) AS LOCATION_ID,
+           L.CITY AS LOCATION_CITY,
+           L.COUNTRY AS LOCATION_COUNTRY,
+           L.CREATED_AT AS LOCATION_CREATED_AT,
+           L.UPDATED_AT AS LOCATION_UPDATED_AT
+    FROM SCREENINGS S
+    JOIN HALLS H ON S.HALL_ID = H.ID
+    JOIN VENUES V ON H.VENUE_ID = V.ID
+    JOIN LOCATIONS L ON V.LOCATION_ID = L.ID
+    WHERE RAWTOHEX(S.MOVIE_ID) = ?
+    ORDER BY S.START_TIME
+    """;
 
     private final DataSource dataSource;
 
@@ -471,6 +506,7 @@ public class MovieRepository {
         Movie movie = mapMovie(rs);
         List<MovieGenre> movieGenres = findMovieGenres(connection, movie.getId());
         List<MoviePhoto> moviePhotos = findMoviePhotos(connection, movie.getId());
+        List<Screening> screenings = findMovieScreenings(connection, movie.getId());
 
         return new Movie(
                 movie.getId(),
@@ -487,7 +523,7 @@ public class MovieRepository {
                 movie.getUpdatedAt(),
                 movieGenres,
                 moviePhotos,
-                null,
+                screenings,
                 null,
                 null
         );
@@ -544,6 +580,58 @@ public class MovieRepository {
         }
 
         return photos;
+    }
+
+    private List<Screening> findMovieScreenings(final Connection connection, final UUID movieId) throws SQLException {
+        List<Screening> screenings = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_MOVIE_SCREENINGS_SQL)) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(movieId));
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    Location location = new Location(
+                            UuidUtil.fromRawHex(rs.getString("LOCATION_ID")),
+                            rs.getString("LOCATION_CITY"),
+                            rs.getString("LOCATION_COUNTRY"),
+                            ResultSetUtil.getLocalDate(rs, "LOCATION_CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "LOCATION_UPDATED_AT"),
+                            null
+                    );
+
+                    Venue venue = new Venue(
+                            UuidUtil.fromRawHex(rs.getString("VENUE_ID")),
+                            rs.getString("VENUE_NAME"),
+                            rs.getString("VENUE_STREET"),
+                            rs.getString("VENUE_IMAGE_URL"),
+                            ResultSetUtil.getLocalDate(rs, "VENUE_CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "VENUE_UPDATED_AT"),
+                            location,
+                            null
+                    );
+
+                    Hall hall = new Hall(
+                            UuidUtil.fromRawHex(rs.getString("HALL_ID")),
+                            rs.getString("HALL_NAME"),
+                            venue,
+                            null,
+                            ResultSetUtil.getLocalDate(rs, "HALL_CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "HALL_UPDATED_AT")
+                    );
+
+                    screenings.add(new Screening(
+                            UuidUtil.fromRawHex(rs.getString("ID")),
+                            null,
+                            hall,
+                            ResultSetUtil.getLocalDateTime(rs, "START_TIME"),
+                            ResultSetUtil.getLocalDate(rs, "CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "UPDATED_AT")
+                    ));
+                }
+            }
+        }
+
+        return screenings;
     }
 
     private Movie mapMovie(final ResultSet rs) throws SQLException {
