@@ -39,7 +39,7 @@ export const MovieInfo = ({ movie }: MovieInfoProps) => {
         </p>
       </div>
       <div className="genre-container">
-        {movieGenres.map(({ id, genre }) => (
+        {movieGenres?.map(({ id, genre }) => (
           <div key={id} className="genre">
             <p className="genre-name">{genre.name}</p>
           </div>
@@ -56,11 +56,11 @@ export const MovieInfo = ({ movie }: MovieInfoProps) => {
         <p className="creator-title">Writers:</p>
         <p className="writer-name">
           {movieWriters
-            .map((writerObj) => {
+            ?.map((writerObj) => {
               const writer = writerObj.writer;
               return `${writer.firstName} ${writer.lastName}`;
             })
-            .join(", ")}
+            .join(", ") ?? ""}
         </p>
       </div>
     </div>

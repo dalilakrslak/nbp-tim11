@@ -1,13 +1,17 @@
 package com.nbp.cinemaapp.repository;
 
+import com.nbp.cinemaapp.entity.Actor;
 import com.nbp.cinemaapp.entity.Genre;
 import com.nbp.cinemaapp.entity.Movie;
 import com.nbp.cinemaapp.entity.MovieGenre;
 import com.nbp.cinemaapp.entity.MoviePhoto;
+import com.nbp.cinemaapp.entity.MovieWriter;
+import com.nbp.cinemaapp.entity.Role;
 import com.nbp.cinemaapp.entity.Screening;
 import com.nbp.cinemaapp.entity.Hall;
 import com.nbp.cinemaapp.entity.Venue;
 import com.nbp.cinemaapp.entity.Location;
+import com.nbp.cinemaapp.entity.Writer;
 import com.nbp.cinemaapp.enums.PgRating;
 import com.nbp.cinemaapp.util.ResultSetUtil;
 import com.nbp.cinemaapp.util.UuidUtil;
@@ -172,6 +176,37 @@ public class MovieRepository {
     WHERE RAWTOHEX(S.MOVIE_ID) = ?
     ORDER BY S.START_TIME
     """;
+
+    private static final String FIND_MOVIE_WRITERS_SQL = """
+        SELECT RAWTOHEX(MW.ID) AS ID,
+               MW.CREATED_AT,
+               MW.UPDATED_AT,
+               RAWTOHEX(W.ID) AS WRITER_ID,
+               W.FIRST_NAME AS WRITER_FIRST_NAME,
+               W.LAST_NAME AS WRITER_LAST_NAME,
+               W.CREATED_AT AS WRITER_CREATED_AT,
+               W.UPDATED_AT AS WRITER_UPDATED_AT
+        FROM MOVIE_WRITER MW
+        JOIN WRITERS W ON MW.WRITER_ID = W.ID
+        WHERE RAWTOHEX(MW.MOVIE_ID) = ?
+        ORDER BY W.LAST_NAME, W.FIRST_NAME
+        """;
+
+    private static final String FIND_MOVIE_ROLES_SQL = """
+        SELECT RAWTOHEX(R.ID) AS ID,
+               R.NAME,
+               R.CREATED_AT,
+               R.UPDATED_AT,
+               RAWTOHEX(A.ID) AS ACTOR_ID,
+               A.FIRST_NAME AS ACTOR_FIRST_NAME,
+               A.LAST_NAME AS ACTOR_LAST_NAME,
+               A.CREATED_AT AS ACTOR_CREATED_AT,
+               A.UPDATED_AT AS ACTOR_UPDATED_AT
+        FROM ROLES R
+        JOIN ACTORS A ON R.ACTOR_ID = A.ID
+        WHERE RAWTOHEX(R.MOVIE_ID) = ?
+        ORDER BY A.LAST_NAME, A.FIRST_NAME
+        """;
 
     private final DataSource dataSource;
 
@@ -507,6 +542,8 @@ public class MovieRepository {
         List<MovieGenre> movieGenres = findMovieGenres(connection, movie.getId());
         List<MoviePhoto> moviePhotos = findMoviePhotos(connection, movie.getId());
         List<Screening> screenings = findMovieScreenings(connection, movie.getId());
+        List<MovieWriter> movieWriters = findMovieWriters(connection, movie.getId());
+        List<Role> roles = findMovieRoles(connection, movie.getId());
 
         return new Movie(
                 movie.getId(),
@@ -524,8 +561,8 @@ public class MovieRepository {
                 movieGenres,
                 moviePhotos,
                 screenings,
-                null,
-                null
+                movieWriters,
+                roles
         );
     }
 
@@ -632,6 +669,69 @@ public class MovieRepository {
         }
 
         return screenings;
+    }
+
+    private List<MovieWriter> findMovieWriters(final Connection connection, final UUID movieId) throws SQLException {
+        List<MovieWriter> movieWriters = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_MOVIE_WRITERS_SQL)) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(movieId));
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    Writer writer = new Writer(
+                            UuidUtil.fromRawHex(rs.getString("WRITER_ID")),
+                            rs.getString("WRITER_FIRST_NAME"),
+                            rs.getString("WRITER_LAST_NAME"),
+                            ResultSetUtil.getLocalDate(rs, "WRITER_CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "WRITER_UPDATED_AT"),
+                            null
+                    );
+
+                    movieWriters.add(new MovieWriter(
+                            UuidUtil.fromRawHex(rs.getString("ID")),
+                            null,
+                            writer,
+                            ResultSetUtil.getLocalDate(rs, "CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "UPDATED_AT")
+                    ));
+                }
+            }
+        }
+
+        return movieWriters;
+    }
+
+    private List<Role> findMovieRoles(final Connection connection, final UUID movieId) throws SQLException {
+        List<Role> roles = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_MOVIE_ROLES_SQL)) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(movieId));
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    Actor actor = new Actor(
+                            UuidUtil.fromRawHex(rs.getString("ACTOR_ID")),
+                            rs.getString("ACTOR_FIRST_NAME"),
+                            rs.getString("ACTOR_LAST_NAME"),
+                            ResultSetUtil.getLocalDate(rs, "ACTOR_CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "ACTOR_UPDATED_AT"),
+                            null
+                    );
+
+                    roles.add(new Role(
+                            UuidUtil.fromRawHex(rs.getString("ID")),
+                            rs.getString("NAME"),
+                            ResultSetUtil.getLocalDate(rs, "CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "UPDATED_AT"),
+                            null,
+                            actor
+                    ));
+                }
+            }
+        }
+
+        return roles;
     }
 
     private Movie mapMovie(final ResultSet rs) throws SQLException {
