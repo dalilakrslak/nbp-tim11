@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -250,8 +251,19 @@ public class UserRepository {
             preparedStatement.setString(1, user.getEmail());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, getRoleName(user));
-            preparedStatement.setBytes(4, user.getProfilePicture());
-            preparedStatement.setString(5, user.getProfilePictureContentType());
+
+            if (user.getProfilePicture() == null) {
+                preparedStatement.setNull(4, Types.BLOB);
+            } else {
+                preparedStatement.setBytes(4, user.getProfilePicture());
+            }
+
+            if (user.getProfilePictureContentType() == null) {
+                preparedStatement.setNull(5, Types.VARCHAR);
+            } else {
+                preparedStatement.setString(5, user.getProfilePictureContentType());
+            }
+
             preparedStatement.setString(6, UuidUtil.toRawHex(user.getId()));
 
             preparedStatement.executeUpdate();

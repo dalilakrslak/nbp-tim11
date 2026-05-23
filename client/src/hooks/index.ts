@@ -13,3 +13,4 @@ export * from "./useScreenings";
 export * from "./useStripeCharge";
 export * from "./useResetPassword";
 export * from "./useForgotPassword";
+export * from "./useProfilePicture";

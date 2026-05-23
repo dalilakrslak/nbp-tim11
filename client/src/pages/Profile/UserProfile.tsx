@@ -1,12 +1,19 @@
-import { useState, useEffect } from "react";
-import { Modal, Form, Input } from "antd";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Modal, Form, Input, message } from "antd";
 import { Button } from "../../components/Button";
-import { useCurrentUser } from "../../hooks";
+import {
+  useCurrentUser,
+  useProfilePicture,
+  useUploadProfilePicture,
+  useDeleteProfilePicture,
+} from "../../hooks";
 import { useChangePassword } from "../../hooks/useResetPasswordLoggedIn";
 
 import "./userProfile.scss";
 import { Navigate } from "react-router-dom";
 import { validateFieldValue } from "../../utils/authValidation";
+
+const MAX_PROFILE_PICTURE_BYTES = 5 * 1024 * 1024;
 
 export default function UserProfile() {
   const { data: currentUser, isLoading } = useCurrentUser();
@@ -15,6 +22,26 @@ export default function UserProfile() {
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [form] = Form.useForm();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const { data: profilePictureBlob } = useProfilePicture();
+  const uploadProfilePicture = useUploadProfilePicture(() =>
+    message.success("Profile picture updated")
+  );
+  const deleteProfilePicture = useDeleteProfilePicture(
+    () => message.success("Profile picture removed"),
+    () => message.error("Could not remove profile picture")
+  );
+
+  const profilePictureUrl = useMemo(
+    () => (profilePictureBlob ? URL.createObjectURL(profilePictureBlob) : null),
+    [profilePictureBlob]
+  );
+
+  useEffect(() => {
+    if (!profilePictureUrl) return;
+    return () => URL.revokeObjectURL(profilePictureUrl);
+  }, [profilePictureUrl]);
 
   const changePasswordMutation = useChangePassword(
     () => {
@@ -54,6 +81,25 @@ export default function UserProfile() {
     });
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      message.error("Please select an image file");
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_PICTURE_BYTES) {
+      message.error("Image must be smaller than 5 MB");
+      return;
+    }
+
+    uploadProfilePicture.mutate(file);
+  };
+
   return (
     <div className="profile-page">
       <div className="profile-header">
@@ -64,7 +110,40 @@ export default function UserProfile() {
       <div className="profile-content">
         <div className="profile-card">
           <div className="profile-avatar">
-            <span>{currentUser.email.charAt(0).toUpperCase()}</span>
+            {profilePictureUrl ? (
+              <img
+                src={profilePictureUrl}
+                alt="Profile"
+                className="profile-avatar-image"
+              />
+            ) : (
+              <span>{currentUser.email.charAt(0).toUpperCase()}</span>
+            )}
+          </div>
+
+          <div className="profile-photo-actions">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <Button
+              variant="secondary"
+              label={profilePictureUrl ? "Change Photo" : "Upload Photo"}
+              loading={uploadProfilePicture.isPending}
+              onClick={() => fileInputRef.current?.click()}
+            />
+            {profilePictureUrl && (
+              <Button
+                variant="secondary"
+                className="profile-remove-button"
+                label="Remove"
+                loading={deleteProfilePicture.isPending}
+                onClick={() => deleteProfilePicture.mutate()}
+              />
+            )}
           </div>
 
           <div className="profile-info">

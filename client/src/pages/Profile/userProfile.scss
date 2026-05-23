@@ -49,6 +49,39 @@
   font-weight: 700;
   color: white;
   margin: 0 auto 24px auto;
+  overflow: hidden;
+}
+
+.profile-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-photo-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .button.profile-remove-button {
+    background-color: #ffffff;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover:not(.disabled) {
+      background-color: #fef2f2;
+      border-color: #d32f2f;
+      color: #d32f2f;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #d32f2f33;
+    }
+  }
 }
 
 .profile-info {
