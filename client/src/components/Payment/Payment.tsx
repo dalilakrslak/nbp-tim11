@@ -9,7 +9,7 @@ import { MovieRatingLabels } from "../../utils";
 import "./payment.scss";
 
 const stripePromise = loadStripe(
-  "pk_test_51RdRoPFTGQmTbzgKC4fAO0djKQaTzWLKnp2Ydc9IFpILMjHaSjCZOgtJxgnoKQlPlIfQGDhr23lHN2384fXzS7f900aKmjdGzu"
+  "pk_test_51TaG7M2etvhnydii6A4HyBNeTKW0UAHF5Aq205kfPWjQVnVQZmEfXFbh4n9xPOsMfFF2XMOveRIekf9RvRRt8B6200dvyI0Xjf"
 );
 
 type SelectedSeat = {

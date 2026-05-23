@@ -4,3 +4,4 @@ export * from "./venues";
 export * from "./auth";
 export * from "./screenings";
 export * from "./seats";
+export * from "./tickets";

@@ -8,7 +8,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
 
-import { authApi, User } from "../../api";
+import { authApi, downloadTicketPdf, User } from "../../api";
 import type { Movie, Screening } from "../../api";
 import { Button } from "../Button";
 import { useStripeCharge } from "../../hooks";
@@ -84,6 +84,24 @@ export const StripeForm = ({ bookingData, totalAmount }: StripeFormProps) => {
 
   const handleBackToHome = () => {
     navigate("/");
+  };
+
+  const handleDownloadTicket = async () => {
+    if (!paymentSuccess?.ticketId) return;
+    try {
+      const blob = await downloadTicketPdf(paymentSuccess.ticketId);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `ticket-${paymentSuccess.ticketId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download ticket PDF:", error);
+      setPaymentError("Failed to download the ticket. Please try again.");
+    }
   };
 
   const mutation = useStripeCharge(
@@ -168,6 +186,14 @@ export const StripeForm = ({ bookingData, totalAmount }: StripeFormProps) => {
             <p className="receipt-message"></p>
 
             <div className="success-actions">
+              {paymentSuccess.ticketId && (
+                <Button
+                  variant="secondary"
+                  label="Download Ticket"
+                  onClick={handleDownloadTicket}
+                  className="download-button"
+                />
+              )}
               <Button
                 variant="primary"
                 label="Back to Home"

@@ -244,12 +244,6 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
 
       <div className="ticket-actions">
         <Button
-          variant="secondary"
-          className="reserve-button"
-          label="Reserve Ticket"
-          disabled={!currentUser}
-        />
-        <Button
           variant="primary"
           className="buy-button"
           label="Buy Ticket"

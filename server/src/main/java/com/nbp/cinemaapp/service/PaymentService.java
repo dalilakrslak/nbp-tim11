@@ -4,6 +4,7 @@ import com.nbp.cinemaapp.dto.request.ChargeRequest;
 import com.nbp.cinemaapp.dto.response.ChargeResponse;
 import com.nbp.cinemaapp.entity.Screening;
 import com.nbp.cinemaapp.entity.Seat;
+import com.nbp.cinemaapp.entity.Ticket;
 import com.nbp.cinemaapp.repository.ScreeningRepository;
 import com.nbp.cinemaapp.repository.SeatRepository;
 import com.stripe.exception.StripeException;
@@ -43,6 +44,8 @@ public class PaymentService {
 
         final Charge charge = Charge.create(chargeParams);
 
+        UUID createdTicketId = null;
+
         if ("succeeded".equals(charge.getStatus())) {
 
             final Screening screening = screeningRepository.findById(request.getBookingDetails().getScreeningId())
@@ -60,18 +63,21 @@ public class PaymentService {
                     .map(Seat::getId)
                     .collect(Collectors.toSet());
 
-            ticketService.createTicket(
+            final Ticket createdTicket = ticketService.createTicket(
                     request.getUserId(),
                     request.getBookingDetails().getScreeningId(),
                     seatIds,
                     request.getAmount()
             );
+
+            createdTicketId = createdTicket.getId();
         }
 
         return new ChargeResponse(
                 charge.getId(),
                 charge.getStatus(),
-                charge.getBalanceTransaction()
+                charge.getBalanceTransaction(),
+                createdTicketId
         );
     }
 
