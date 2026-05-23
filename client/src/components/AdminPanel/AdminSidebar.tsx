@@ -4,6 +4,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import MovieIcon from "@mui/icons-material/Movie";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import EventSeatIcon from "@mui/icons-material/EventSeat";
 
 export default function AdminSidebar() {
   return (
@@ -45,6 +46,16 @@ export default function AdminSidebar() {
   >
     <ApartmentIcon />
     <span>Venues</span>
+  </NavLink>
+
+  <NavLink
+    to="/admin/screenings"
+    className={({ isActive }) =>
+      isActive ? "sidebar-link active" : "sidebar-link"
+    }
+  >
+    <EventSeatIcon />
+    <span>Screenings</span>
   </NavLink>
 
   <NavLink
