@@ -1,6 +1,7 @@
 package com.nbp.cinemaapp.service;
 
 import com.nbp.cinemaapp.dto.SeatAvailability;
+import com.nbp.cinemaapp.dto.request.ScreeningRequest;
 import com.nbp.cinemaapp.entity.Screening;
 import com.nbp.cinemaapp.entity.Seat;
 import com.nbp.cinemaapp.entity.SeatBooking;
@@ -84,5 +85,25 @@ public class ScreeningService {
 
     public List<Screening> getScreeningsByMovieId(final UUID movieId) {
         return screeningRepository.findByMovieId(movieId);
+    }
+
+    public Screening createScreening(final ScreeningRequest request) {
+        if (request.getMovieId() == null) {
+            throw new IllegalArgumentException("Movie is required");
+        }
+
+        if (request.getHallId() == null) {
+            throw new IllegalArgumentException("Hall is required");
+        }
+
+        if (request.getStartTime() == null) {
+            throw new IllegalArgumentException("Start time is required");
+        }
+
+        return screeningRepository.create(
+                request.getMovieId(),
+                request.getHallId(),
+                request.getStartTime()
+        );
     }
 }

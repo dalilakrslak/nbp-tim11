@@ -4,6 +4,7 @@ import com.nbp.cinemaapp.dto.SeatAvailability;
 import com.nbp.cinemaapp.entity.Screening;
 import com.nbp.cinemaapp.service.ScreeningService;
 import com.nbp.cinemaapp.util.Pagination;
+import com.nbp.cinemaapp.dto.request.ScreeningRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -108,5 +112,20 @@ public class ScreeningController {
             @Parameter(description = "UUID identifikator sjedišta", required = true)
             @PathVariable final UUID seatId) {
         return ResponseEntity.ok(screeningService.isSeatTaken(screeningId, seatId));
+    }
+
+    @Operation(
+            summary = "Kreira novu projekciju",
+            description = "Kreira novu projekciju za odabrani film, salu i vrijeme prikazivanja. Dostupno samo administratorima."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Projekcija uspješno kreirana"),
+            @ApiResponse(responseCode = "400", description = "Neispravni podaci za kreiranje projekcije"),
+            @ApiResponse(responseCode = "403", description = "Pristup dozvoljen samo administratoru")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<Screening> createScreening(@RequestBody ScreeningRequest request) {
+        return ResponseEntity.ok(screeningService.createScreening(request));
     }
 }

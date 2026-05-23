@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.sql.Timestamp;
 
 @Repository
 public class ScreeningRepository {
@@ -290,5 +291,48 @@ public class ScreeningRepository {
                 ResultSetUtil.getLocalDate(rs, "CREATED_AT"),
                 ResultSetUtil.getLocalDate(rs, "UPDATED_AT")
         );
+    }
+
+    public Screening create(final UUID movieId,
+                            final UUID hallId,
+                            final java.time.LocalDateTime startTime) {
+        final UUID id = UUID.randomUUID();
+
+        final String sql = """
+        INSERT INTO SCREENINGS (
+            ID,
+            MOVIE_ID,
+            HALL_ID,
+            START_TIME,
+            CREATED_AT,
+            UPDATED_AT
+        )
+        VALUES (
+            HEXTORAW(?),
+            HEXTORAW(?),
+            HEXTORAW(?),
+            ?,
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+        """;
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(id));
+            preparedStatement.setString(2, UuidUtil.toRawHex(movieId));
+            preparedStatement.setString(3, UuidUtil.toRawHex(hallId));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(startTime));
+
+            preparedStatement.executeUpdate();
+
+            return findById(id)
+                    .orElseThrow(() -> new IllegalStateException("Screening was inserted but could not be retrieved"));
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create screening", e);
+        }
     }
 }

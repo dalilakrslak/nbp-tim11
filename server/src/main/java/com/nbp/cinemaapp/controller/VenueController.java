@@ -2,6 +2,7 @@ package com.nbp.cinemaapp.controller;
 
 import com.nbp.cinemaapp.dto.request.VenueRequest;
 import com.nbp.cinemaapp.dto.response.VenueResponse;
+import com.nbp.cinemaapp.entity.Hall;
 import com.nbp.cinemaapp.entity.Venue;
 import com.nbp.cinemaapp.service.VenueService;
 import com.nbp.cinemaapp.util.Pagination;
@@ -100,5 +101,18 @@ public class VenueController {
     public ResponseEntity<Void> deleteVenue(@PathVariable UUID venueId) {
         venueService.deleteVenue(venueId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Dohvaća sale za kino",
+            description = "Vraća listu sala koje pripadaju odabranom kinu."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista sala uspješno vraćena"),
+            @ApiResponse(responseCode = "404", description = "Kino nije pronađeno")
+    })
+    @GetMapping("/{venueId}/halls")
+    public ResponseEntity<List<Hall>> getHallsByVenueId(@PathVariable UUID venueId) {
+        return ResponseEntity.ok(venueService.getHallsByVenueId(venueId));
     }
 }

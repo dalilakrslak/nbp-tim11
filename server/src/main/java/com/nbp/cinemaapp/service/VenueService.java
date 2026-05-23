@@ -2,6 +2,7 @@ package com.nbp.cinemaapp.service;
 
 import com.nbp.cinemaapp.dto.request.VenueRequest;
 import com.nbp.cinemaapp.dto.response.VenueResponse;
+import com.nbp.cinemaapp.entity.Hall;
 import com.nbp.cinemaapp.entity.Location;
 import com.nbp.cinemaapp.entity.Venue;
 import com.nbp.cinemaapp.mapper.VenueMapper;
@@ -60,5 +61,9 @@ public class VenueService {
         if (!deleted) {
             throw new EntityNotFoundException("Venue not found with id: " + venueId);
         }
+    }
+
+    public List<Hall> getHallsByVenueId(final UUID venueId) {
+        return venueRepository.findHallsByVenueId(venueId);
     }
 }

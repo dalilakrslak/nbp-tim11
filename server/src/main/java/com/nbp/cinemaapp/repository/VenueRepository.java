@@ -1,5 +1,6 @@
 package com.nbp.cinemaapp.repository;
 
+import com.nbp.cinemaapp.entity.Hall;
 import com.nbp.cinemaapp.entity.Location;
 import com.nbp.cinemaapp.entity.Venue;
 import com.nbp.cinemaapp.util.ResultSetUtil;
@@ -86,6 +87,16 @@ public class VenueRepository {
             LOCATION_ID = HEXTORAW(?)
         WHERE RAWTOHEX(ID) = ?
         """;
+
+    private static final String FIND_HALLS_BY_VENUE_ID_SQL = """
+        SELECT RAWTOHEX(H.ID) AS ID,
+               H.NAME,
+               H.CREATED_AT,
+               H.UPDATED_AT
+        FROM HALLS H
+        WHERE RAWTOHEX(H.VENUE_ID) = ?
+        ORDER BY H.NAME
+    """;
 
     private final DataSource dataSource;
 
@@ -249,5 +260,33 @@ public class VenueRepository {
                 location,
                 null
         );
+    }
+
+    public List<Hall> findHallsByVenueId(final UUID venueId) {
+        List<Hall> halls = new ArrayList<>();
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_HALLS_BY_VENUE_ID_SQL)
+        ) {
+            preparedStatement.setString(1, UuidUtil.toRawHex(venueId));
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    halls.add(new Hall(
+                            UuidUtil.fromRawHex(rs.getString("ID")),
+                            rs.getString("NAME"),
+                            null,
+                            null,
+                            ResultSetUtil.getLocalDate(rs, "CREATED_AT"),
+                            ResultSetUtil.getLocalDate(rs, "UPDATED_AT")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch halls by venue id: " + venueId, e);
+        }
+
+        return halls;
     }
 }
