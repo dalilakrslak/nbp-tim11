@@ -3,6 +3,7 @@ import "./adminSidebar.scss";
 import PersonIcon from "@mui/icons-material/Person";
 import MovieIcon from "@mui/icons-material/Movie";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 export default function AdminSidebar() {
   return (
@@ -44,6 +45,16 @@ export default function AdminSidebar() {
   >
     <ApartmentIcon />
     <span>Venues</span>
+  </NavLink>
+
+  <NavLink
+    to="/admin/reports"
+    className={({ isActive }) =>
+      isActive ? "sidebar-link active" : "sidebar-link"
+    }
+  >
+    <AssessmentIcon />
+    <span>Reports</span>
   </NavLink>
 </nav>
 

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,7 @@ public class ReportsController {
             @ApiResponse(responseCode = "500", description = "Greška prilikom dohvaćanja kataloga filmova")
     })
     @GetMapping("/movie-catalog")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<MovieCatalogResponse> getMovieCatalog() {
         return reportsService.getMovieCatalog();
     }
@@ -47,6 +49,7 @@ public class ReportsController {
             @ApiResponse(responseCode = "500", description = "Greška prilikom dohvaćanja dostupnosti projekcija")
     })
     @GetMapping("/screening-availability")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<ScreeningAvailabilityResponse> getScreeningAvailability() {
         return reportsService.getScreeningAvailability();
     }
@@ -60,6 +63,7 @@ public class ReportsController {
             @ApiResponse(responseCode = "500", description = "Greška prilikom dohvaćanja izvještaja o prodaji karata")
     })
     @GetMapping("/ticket-sales")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TicketSalesReportResponse> getTicketSalesReport() {
         return reportsService.getTicketSalesReport();
     }

@@ -26,6 +26,7 @@ import UserProfile from "./pages/Profile/UserProfile";
 import "./App.scss";
 import MoviesAdmin from "./pages/AdminPanel/MoviesAdmin";
 import VenuesAdmin from "./pages/AdminPanel/VenuesAdmin";
+import Reports from "./pages/AdminPanel/Reports/Reports";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const App = () => {
                   <Route path="users" element={<UsersAdmin />} />
                   <Route path="movies" element={<MoviesAdmin />} />
                   <Route path="venues" element={<VenuesAdmin />} />
+                  <Route path="reports" element={<Reports />} />
                 </Route>
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
