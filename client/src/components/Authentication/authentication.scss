@@ -28,6 +28,26 @@
         width: 131px;
       }
 
+      .auth-info-text {
+        color: variables.$neutral-white;
+        text-align: center;
+        margin: 0;
+      }
+      
+      .auth-error-text {
+        color: variables.$red-dark;
+        margin: 0;
+        padding: 0;
+      }
+
+      .auth-general-error {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid variables.$red-dark;
+        border-radius: 8px;
+        background-color: rgba(178, 34, 34, 0.1);
+      }
+
       .auth-title {
         margin: 0 auto;
         font-size: 24px;
@@ -106,7 +126,6 @@
         }
 
         .auth-error-text {
-          color: variables.$red-dark;
           margin: 0;
           padding: 0;
         }

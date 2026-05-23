@@ -53,7 +53,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/movies").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/movies/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/*").authenticated()
-                        .requestMatchers(HttpMethod.POST,"/api/auth/reset-password/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/venues").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/venues/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/venues/*").authenticated()
