@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.io.StringReader;
 
 @Repository
 public class MovieRepository {
@@ -120,6 +122,8 @@ public class MovieRepository {
         DELETE FROM MOVIES
         WHERE RAWTOHEX(ID) = ?
         """;
+
+    private static final String BULK_IMPORT_MOVIES_SQL = "{ call BULK_CREATE_MOVIES_FROM_XML(?, ?) }";
 
     private static final String FIND_MOVIE_GENRES_SQL = """
         SELECT RAWTOHEX(MG.ID) AS ID,
@@ -378,6 +382,48 @@ public class MovieRepository {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete movie by id: " + id, e);
+        }
+    }
+
+    public int bulkImportMoviesFromXml(final String xmlContent) {
+        Connection connection = null;
+        boolean originalAutoCommit = true;
+
+        try {
+            connection = dataSource.getConnection();
+            originalAutoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+
+            try (CallableStatement callableStatement = connection.prepareCall(BULK_IMPORT_MOVIES_SQL)) {
+                callableStatement.setCharacterStream(1, new StringReader(xmlContent), xmlContent.length());
+                callableStatement.registerOutParameter(2, Types.INTEGER);
+                callableStatement.execute();
+
+                final int importedMovies = callableStatement.getInt(2);
+                connection.commit();
+                connection.setAutoCommit(originalAutoCommit);
+                return importedMovies;
+            } catch (final SQLException e) {
+                connection.rollback();
+
+                final int errorCode = Math.abs(e.getErrorCode());
+                if (errorCode >= 20000 && errorCode < 21000) {
+                    throw new IllegalArgumentException(extractOracleMessage(e), e);
+                }
+
+                throw new RuntimeException("Failed to bulk import movies from XML", e);
+            }
+        } catch (final SQLException e) {
+            throw new RuntimeException("Failed to bulk import movies from XML", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(originalAutoCommit);
+                    connection.close();
+                } catch (final SQLException ignored) {
+                    // Ignore close failures; the import attempt already completed or failed.
+                }
+            }
         }
     }
 
@@ -801,6 +847,17 @@ public class MovieRepository {
 
     private String getPgRatingName(final Movie movie) {
         return movie.getPgRating() != null ? movie.getPgRating().name() : null;
+    }
+
+    private String extractOracleMessage(final SQLException exception) {
+        final String message = exception.getMessage();
+        if (message == null || message.isBlank()) {
+            return "Movie XML import failed";
+        }
+
+        final String firstLine = message.lines().findFirst().orElse(message).trim();
+        final int separatorIndex = firstLine.indexOf(": ");
+        return separatorIndex >= 0 ? firstLine.substring(separatorIndex + 2).trim() : firstLine;
     }
 
     private record QueryParts(String whereClause, List<Object> parameters) {

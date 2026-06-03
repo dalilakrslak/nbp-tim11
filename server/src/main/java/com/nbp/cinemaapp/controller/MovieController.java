@@ -2,6 +2,7 @@ package com.nbp.cinemaapp.controller;
 
 import com.nbp.cinemaapp.dto.MovieRating;
 import com.nbp.cinemaapp.dto.request.MovieRequest;
+import com.nbp.cinemaapp.dto.response.MovieBulkImportResponse;
 import com.nbp.cinemaapp.dto.response.MovieResponse;
 import com.nbp.cinemaapp.entity.Movie;
 import com.nbp.cinemaapp.entity.Screening;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -259,5 +262,22 @@ public class MovieController {
             @PathVariable UUID movieId) {
         movieService.deleteMovie(movieId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Bulk kreira filmove iz XML datoteke",
+            description = "Učitava XML datoteku sa listom filmova i bulk insertom ih upisuje u bazu. Dostupno samo administratorima."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filmovi uspješno uvezeni"),
+            @ApiResponse(responseCode = "400", description = "Neispravna XML datoteka ili podaci"),
+            @ApiResponse(responseCode = "403", description = "Pristup dozvoljen samo administratoru")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MovieBulkImportResponse> importMoviesFromXml(
+            @Parameter(description = "XML datoteka sa filmovima", required = true)
+            @RequestParam("file") final MultipartFile file) {
+        return ResponseEntity.ok(movieService.importMoviesFromXml(file));
     }
 }

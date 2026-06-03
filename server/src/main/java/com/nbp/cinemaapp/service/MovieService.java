@@ -1,6 +1,7 @@
 package com.nbp.cinemaapp.service;
 
 import com.nbp.cinemaapp.dto.MovieRating;
+import com.nbp.cinemaapp.dto.response.MovieBulkImportResponse;
 import com.nbp.cinemaapp.dto.request.MovieRequest;
 import com.nbp.cinemaapp.dto.response.MovieResponse;
 import com.nbp.cinemaapp.entity.Movie;
@@ -11,8 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestTemplate;
+import org.xml.sax.InputSource;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -132,5 +139,41 @@ public class MovieService {
 
     public void deleteMovie(UUID movieId) {
         movieRepository.deleteById(movieId);
+    }
+
+    public MovieBulkImportResponse importMoviesFromXml(final MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("XML file is required");
+        }
+
+        final String xmlContent;
+        try {
+            xmlContent = new String(file.getBytes(), StandardCharsets.UTF_8);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Failed to read XML file", e);
+        }
+
+        validateXml(xmlContent);
+
+        final int importedMovies = movieRepository.bulkImportMoviesFromXml(xmlContent);
+        if (importedMovies == 0) {
+            throw new IllegalArgumentException("XML file does not contain any movie entries");
+        }
+
+        return new MovieBulkImportResponse(importedMovies);
+    }
+
+    private void validateXml(final String xmlContent) {
+        try {
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Invalid XML file", e);
+        }
     }
 }
