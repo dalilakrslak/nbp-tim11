@@ -14,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestTemplate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.XMLConstants;
@@ -164,6 +168,7 @@ public class MovieService {
     }
 
     private void validateXml(final String xmlContent) {
+        final Document document;
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -171,9 +176,160 @@ public class MovieService {
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
+            document = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlContent)));
         } catch (final Exception e) {
             throw new IllegalArgumentException("Invalid XML file", e);
         }
+
+        validateRequiredImportFields(document);
+    }
+
+    private void validateRequiredImportFields(final Document document) {
+        final NodeList movies = document.getElementsByTagNameNS("*", "movie");
+        if (movies.getLength() == 0) {
+            throw new IllegalArgumentException("XML file does not contain any movie entries");
+        }
+
+        for (int i = 0; i < movies.getLength(); i++) {
+            final Element movie = (Element) movies.item(i);
+            final String title = requireDirectText(movie, "title", "Each movie must include title.");
+
+            requireDirectText(movie, "duration", "Movie '" + title + "' must include duration.");
+            requireDirectText(movie, "pgRating", "Movie '" + title + "' must include pgRating.");
+            requireDirectText(movie, "language", "Movie '" + title + "' must include language.");
+            requireDirectText(movie, "trailerUrl", "Movie '" + title + "' must include trailerUrl.");
+            requireDirectText(movie, "director", "Movie '" + title + "' must include director.");
+            validateMovieGenres(movie, title);
+            validateMovieWriters(movie, title);
+            validateMoviePhotos(movie, title);
+        }
+    }
+
+    private void validateMovieGenres(final Element movie, final String title) {
+        final Element genres = getDirectChild(movie, "genres");
+        if (genres == null) {
+            throw new IllegalArgumentException("Movie '" + title + "' must include at least one genre.");
+        }
+
+        final List<Element> genreElements = getDirectChildren(genres, "genre");
+        if (genreElements.isEmpty()) {
+            throw new IllegalArgumentException("Movie '" + title + "' must include at least one genre.");
+        }
+
+        for (final Element genre : genreElements) {
+            final String genreName = firstNonBlank(
+                    getDirectText(genre, "name"),
+                    genre.getAttribute("name"),
+                    genre.getTextContent()
+            );
+            if (genreName == null) {
+                throw new IllegalArgumentException("Each genre for movie '" + title + "' must include a name.");
+            }
+        }
+    }
+
+    private void validateMovieWriters(final Element movie, final String title) {
+        final Element writers = getDirectChild(movie, "writers");
+        if (writers == null) {
+            throw new IllegalArgumentException("Movie '" + title + "' must include at least one writer.");
+        }
+
+        final List<Element> writerElements = getDirectChildren(writers, "writer");
+        if (writerElements.isEmpty()) {
+            throw new IllegalArgumentException("Movie '" + title + "' must include at least one writer.");
+        }
+
+        for (final Element writer : writerElements) {
+            final String firstName = firstNonBlank(
+                    getDirectText(writer, "firstName"),
+                    getDirectText(writer, "first_name"),
+                    writer.getAttribute("firstName"),
+                    writer.getAttribute("first_name")
+            );
+            final String lastName = firstNonBlank(
+                    getDirectText(writer, "lastName"),
+                    getDirectText(writer, "last_name"),
+                    writer.getAttribute("lastName"),
+                    writer.getAttribute("last_name")
+            );
+            final String fullName = firstNonBlank(
+                    getDirectText(writer, "fullName"),
+                    writer.getAttribute("fullName"),
+                    writer.getTextContent()
+            );
+
+            if ((firstName == null || lastName == null) && !hasFirstAndLastName(fullName)) {
+                throw new IllegalArgumentException(
+                        "Each writer for movie '" + title + "' must include firstName and lastName, or a fullName containing both names."
+                );
+            }
+        }
+    }
+
+    private void validateMoviePhotos(final Element movie, final String title) {
+        final Element photos = getDirectChild(movie, "photos");
+        if (photos == null) {
+            return;
+        }
+
+        for (final Element photo : getDirectChildren(photos, "photo")) {
+            final String url = firstNonBlank(getDirectText(photo, "url"), photo.getAttribute("url"));
+            if (url == null) {
+                throw new IllegalArgumentException("Each photo for movie '" + title + "' must include a url.");
+            }
+        }
+    }
+
+    private String requireDirectText(final Element element, final String childName, final String message) {
+        final String value = getDirectText(element, childName);
+        if (value == null) {
+            throw new IllegalArgumentException(message);
+        }
+
+        return value;
+    }
+
+    private String getDirectText(final Element element, final String childName) {
+        final Element child = getDirectChild(element, childName);
+        return child == null ? null : firstNonBlank(child.getTextContent());
+    }
+
+    private Element getDirectChild(final Element element, final String childName) {
+        final NodeList children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node child = children.item(i);
+            if (child instanceof Element childElement && childName.equals(childElement.getLocalName())) {
+                return childElement;
+            }
+        }
+
+        return null;
+    }
+
+    private List<Element> getDirectChildren(final Element element, final String childName) {
+        final List<Element> matchingChildren = new ArrayList<>();
+        final NodeList children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node child = children.item(i);
+            if (child instanceof Element childElement && childName.equals(childElement.getLocalName())) {
+                matchingChildren.add(childElement);
+            }
+        }
+
+        return matchingChildren;
+    }
+
+    private String firstNonBlank(final String... values) {
+        for (final String value : values) {
+            if (value != null && !value.isBlank()) {
+                return value.trim();
+            }
+        }
+
+        return null;
+    }
+
+    private boolean hasFirstAndLastName(final String fullName) {
+        return fullName != null && fullName.trim().contains(" ");
     }
 }
